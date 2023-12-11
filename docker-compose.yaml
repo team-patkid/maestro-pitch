@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./
+    container_name: maestro_api
+    expose:
+      - "3001"
+
+networks:
+  nestjs_network:
+    driver: bridge
