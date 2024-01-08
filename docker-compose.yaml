@@ -10,4 +10,4 @@ services:
 networks:
   default:
     external:
-      name: maestro-pitch_default
+      name: patkid-bridge
