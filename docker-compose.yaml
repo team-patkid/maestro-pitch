@@ -5,8 +5,9 @@ services:
     build: ./
     container_name: maestro_api
     expose:
-      - "3001"
+      - '3001'
 
 networks:
-  nestjs_network:
-    driver: bridge
+  default:
+    external:
+      name: maestro-pitch_default
