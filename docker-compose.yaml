@@ -6,8 +6,9 @@ services:
     container_name: maestro_api
     expose:
       - '3001'
+    networks:
+      - patkid-bridge
 
 networks:
-  default:
-    external:
-      name: patkid-bridge
+  patkid-bridge:
+    external: true
