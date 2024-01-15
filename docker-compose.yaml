@@ -11,9 +11,9 @@ services:
     logging:
       driver: awslogs
       options:
-        awslogs-group: 'maestro-backend'
+        awslogs-group: '${NODE_ENV}-maestro-backend'
         awslogs-region: 'ap-northeast-2'
-        awslogs-stream: 'backend-${NODE_ENV}'
+        awslogs-stream: 'backend'
 networks:
   patkid-bridge:
     external: true
