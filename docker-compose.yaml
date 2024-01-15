@@ -13,7 +13,7 @@ services:
       options:
         awslogs-group: 'maestro-backend'
         awslogs-region: 'ap-northeast-2'
-        awslogs-stream: 'backend'
+        awslogs-stream: 'backend-${NODE_ENV}'
 networks:
   patkid-bridge:
     external: true
