@@ -7,9 +7,18 @@ export class LogProvider {
   static info(ctx: Record<string, any>, method: string) {
     console.log({
       requestId: rTracer.id(),
-      message: ctx,
+      ctx,
       method,
       level: LogLevel.INFO,
+    });
+  }
+
+  static error(ctx: Record<string, any>, method: string): void {
+    console.log({
+      ...(rTracer.id() ? { requestId: rTracer.id() } : {}),
+      method,
+      ctx,
+      level: LogLevel.ERROR,
     });
   }
 }

@@ -14,6 +14,7 @@ import { setupSwagger } from './global/swagger';
 import { LogProvider } from './log/logProvider';
 import { MainModule } from './module/main.module';
 import helmet from 'helmet';
+import { RequestMethod } from '@nestjs/common';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -28,7 +29,9 @@ async function bootstrap() {
     { cors: true },
   );
 
-  app.setGlobalPrefix(ConfigService.getConfig().API_VERSION);
+  app.setGlobalPrefix(ConfigService.getConfig().API_VERSION, {
+    exclude: [{ path: '/health', method: RequestMethod.GET }],
+  });
 
   setupSwagger(app);
   app.use(rTracer.expressMiddleware());
@@ -51,7 +54,29 @@ async function bootstrap() {
     logAllReqHeader: true,
     stream: {
       write: (message: string) => {
-        LogProvider.info({ message }, 'Request Data');
+        let convertMessage: Record<string, any>;
+        let method: string;
+        try {
+          if (message.includes('Request Body')) {
+            convertMessage = JSON.parse(
+              message.replace('\n', '').replace('Request Body: ', ''),
+            );
+            method = 'Request Body';
+          } else if (message.includes('Response Body')) {
+            convertMessage = JSON.parse(
+              message.replace('\n', '').replace('Response Body: ', ''),
+            );
+            method = 'Response Body';
+          } else {
+            convertMessage = { message };
+            method = 'Http';
+          }
+        } catch {
+          convertMessage = { message };
+          method = 'Http';
+        }
+
+        LogProvider.info(convertMessage, method);
         return true;
       },
     },
