@@ -28,6 +28,7 @@
     "@nestjs/typeorm": "^10.0.1",
     "@sentry/node": "^7.93.0",
     "@types/sinon": "^17.0.3",
+    "axios": "^1.6.5",
     "class-transformer": "^0.5.1",
     "cls-rtracer": "^2.6.3",
     "helmet": "^7.1.0",

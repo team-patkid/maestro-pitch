@@ -1,6 +1,7 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { KakaoClientService } from './kakao.client.service';
 import { HttpModule, HttpService } from '@nestjs/axios';
+import { CoreClientService } from './core.client.service';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
       }),
     }),
   ],
-  providers: [KakaoClientService],
+  providers: [CoreClientService, KakaoClientService],
   exports: [KakaoClientService],
 })
 export class ClientModule implements OnModuleInit {
