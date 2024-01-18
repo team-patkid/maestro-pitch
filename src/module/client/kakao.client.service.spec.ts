@@ -1,10 +1,9 @@
-import Sinon, { SinonStubbedInstance } from 'sinon';
-import { KakaoClientService } from './kakao.client.service';
-import { v4 as uuidV4 } from 'uuid';
-import { KakaoAuthInfo, KakaoUserInfo } from './dto/kakao.client.dto';
-import { CoreClientService } from './core.client.service';
 import { HttpStatus } from '@nestjs/common';
-import moment from 'moment';
+import Sinon, { SinonStubbedInstance } from 'sinon';
+import { v4 as uuidV4 } from 'uuid';
+import { CoreClientService } from './core.client.service';
+import { KakaoAuthInfo, KakaoUserInfo } from './dto/kakao.client.dto';
+import { KakaoClientService } from './kakao.client.service';
 
 describe('KakaoClientService', () => {
   let kakaoClientService: KakaoClientService;
