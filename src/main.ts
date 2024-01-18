@@ -1,3 +1,4 @@
+import { HttpStatus, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   ExpressAdapter,
@@ -5,6 +6,7 @@ import {
 } from '@nestjs/platform-express';
 import * as Sentry from '@sentry/node';
 import rTracer from 'cls-rtracer';
+import helmet from 'helmet';
 import moment from 'moment-timezone';
 import morganBody from 'morgan-body';
 import { initializeTransactionalContext } from 'typeorm-transactional';
@@ -13,8 +15,6 @@ import { ConfigService } from './config/config.service';
 import { setupSwagger } from './global/swagger';
 import { LogProvider } from './log/logProvider';
 import { MainModule } from './module/main.module';
-import helmet from 'helmet';
-import { RequestMethod } from '@nestjs/common';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -29,15 +29,19 @@ async function bootstrap() {
     { cors: true },
   );
 
+  // 버전 관리
   app.setGlobalPrefix(ConfigService.getConfig().API_VERSION, {
     exclude: [{ path: '/health', method: RequestMethod.GET }],
   });
 
+  // 문서 모듈
   setupSwagger(app);
+
   app.use(rTracer.expressMiddleware());
   app.use(helmet({ contentSecurityPolicy: false }));
   app.enableShutdownHooks();
 
+  // 에러 모듈
   Sentry.init({
     dsn: ConfigService.getConfig().SENTRY_DSN,
     enabled: true,
@@ -46,6 +50,7 @@ async function bootstrap() {
     attachStacktrace: true,
   });
 
+  // request, response 로그 관리
   morganBody(app.getHttpAdapter().getInstance(), {
     noColors: true,
     prettify: false,
@@ -81,6 +86,25 @@ async function bootstrap() {
       },
     },
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      dismissDefaultMessages: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      disableErrorMessages: false,
+      validationError: {
+        target: true,
+        value: true,
+      },
+    }),
+  );
 
   await app.listen(port);
 
