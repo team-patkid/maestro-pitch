@@ -8,6 +8,8 @@ import { ClientModule } from './client/client.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ServiceExceptionFilter } from 'src/filter/service.exception.filter';
 import { AppController } from 'src/app.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from 'src/config/config.service';
 
 @Module({
   imports: [
@@ -20,6 +22,12 @@ import { AppController } from 'src/app.controller';
 
         return addTransactionalDataSource(new DataSource(options));
       },
+    }),
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: ConfigService.getConfig().JWT.SECRET,
+        global: true,
+      }),
     }),
     AuthModule,
     ClientModule,
