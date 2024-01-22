@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from 'src/config/config.service';
 import { CoreClientService } from './core.client.service';
 import { KakaoAuthInfo, KakaoUserInfo } from './dto/kakao.client.dto';
-import { ConfigService } from 'src/config/config.service';
 
 @Injectable()
 export class KakaoClientService {
@@ -19,7 +19,6 @@ export class KakaoClientService {
         },
       },
     );
-
     return KakaoUserInfo.from(response.data);
   }
 

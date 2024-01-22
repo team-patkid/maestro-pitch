@@ -1,8 +1,6 @@
-import { HttpStatus } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtPayload } from 'jsonwebtoken';
-import sinon, { SinonStubbedInstance } from 'sinon';
 import { ConfigService } from 'src/config/config.service';
 import { UsersEntity } from 'src/repository/entity/users.entity';
 import {
@@ -11,15 +9,10 @@ import {
   TypeUsersStatus,
 } from 'src/repository/enum/users.repository.enum';
 import { v4 as uuidV4 } from 'uuid';
-import { CoreClientService } from '../client/core.client.service';
-import { KakaoAuthInfo } from '../client/dto/kakao.client.dto';
-import { KakaoClientService } from '../client/kakao.client.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let kakaoClientService: KakaoClientService;
-  let coreClientService: SinonStubbedInstance<CoreClientService>;
   let jwtService: JwtService;
 
   beforeEach(async () => {
@@ -33,31 +26,10 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    coreClientService = sinon.createStubInstance(CoreClientService);
-    kakaoClientService = new KakaoClientService(coreClientService);
     jwtService = module.get(JwtService);
-    authService = new AuthService(kakaoClientService, jwtService);
+
+    authService = new AuthService(jwtService);
   });
-
-  const createKakaoAuthInfoDto = (ctx: {
-    access_token?: string;
-    token_type?: string;
-    refresh_token?: string;
-    expires_in?: number;
-    refresh_token_expires_in?: number;
-  }): KakaoAuthInfo => {
-    const kakaoAuthTokenDto = KakaoAuthInfo.from({
-      access_token: ctx.access_token ? ctx.access_token : uuidV4(),
-      expires_in: ctx.expires_in ? ctx.expires_in : 123456,
-      refresh_token: ctx.refresh_token ? ctx.refresh_token : uuidV4(),
-      refresh_token_expires_in: ctx.refresh_token_expires_in
-        ? ctx.refresh_token_expires_in
-        : 654321,
-      token_type: ctx.token_type ? ctx.token_type : 'NORMAL',
-    });
-
-    return kakaoAuthTokenDto;
-  };
 
   const createUsersEntity = (ctx: {
     email?: string;
@@ -91,49 +63,36 @@ describe('AuthService', () => {
     return usersEntity;
   };
 
-  it('인가 코드 값으로 kakao user info 가져 오기', async () => {
-    const code = uuidV4();
-    const redirect = uuidV4();
+  describe('Auth Service', () => {
+    it('jwt를 정상적으로 생성할 수 있다', async () => {
+      const payload: JwtPayload = {
+        foo: 'bar',
+        bar: 'foo',
+      };
 
-    coreClientService.sendPostRequest.resolves({
-      result: true,
-      data: createKakaoAuthInfoDto({}),
-      status: HttpStatus.OK,
+      const jwt = await authService.getJwt(
+        payload,
+        ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
+      );
+
+      expect(jwt.split('.').length).toBe(3);
     });
 
-    const kakaoAuthInfo = await authService.getKakaoAuthInfo(code, redirect);
+    it('jwt를 원하는 타입으로 decode 할 수 있다.', async () => {
+      const email = 'foo@bar.com';
 
-    expect(kakaoAuthInfo).toBeInstanceOf(KakaoAuthInfo);
-  });
+      const userEntity = createUsersEntity({ email });
 
-  it('jwt를 정상적으로 생성할 수 있다', async () => {
-    const payload: JwtPayload = {
-      foo: 'bar',
-      bar: 'foo',
-    };
+      const jwt = await authService.getJwt(
+        { ...userEntity },
+        ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
+      );
 
-    const jwt = await authService.getJwt(
-      payload,
-      ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
-    );
+      expect(jwt.split('.').length).toBe(3);
 
-    expect(jwt.split('.').length).toBe(3);
-  });
+      const decodePayload = await authService.decodeJwt<UsersEntity>(jwt);
 
-  it('jwt를 원하는 타입으로 decode 할 수 있다.', async () => {
-    const email = 'foo@bar.com';
-
-    const userEntity = createUsersEntity({ email });
-
-    const jwt = await authService.getJwt(
-      userEntity.toObject(),
-      ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
-    );
-
-    expect(jwt.split('.').length).toBe(3);
-
-    const decodePayload = await authService.decodeJwt<UsersEntity>(jwt);
-
-    expect(decodePayload.email).toBe(email);
+      expect(decodePayload.email).toBe(email);
+    });
   });
 });

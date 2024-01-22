@@ -1,29 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { KakaoClientService } from '../client/kakao.client.service';
-import { KakaoAuthInfo } from '../client/dto/kakao.client.dto';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { ServiceError } from 'src/exception/service.error';
 import { ErrorCode } from 'src/exception/enum/error.enum';
+import { ServiceError } from 'src/exception/service.error';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly kakaoClientService: KakaoClientService,
-    private readonly jwtService: JwtService,
-  ) {}
-
-  async getKakaoAuthInfo(
-    code: string,
-    redirect: string,
-  ): Promise<KakaoAuthInfo> {
-    const kakaoAuthInfo = await this.kakaoClientService.getKakaoAuthInfo(
-      code,
-      redirect,
-    );
-
-    return kakaoAuthInfo;
-  }
+  constructor(private readonly jwtService: JwtService) {}
 
   async getJwt(payload: JwtPayload, expiresIn: string): Promise<string> {
     const jwt = await this.jwtService.signAsync(payload, { expiresIn });
