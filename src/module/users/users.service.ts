@@ -34,6 +34,11 @@ export class UsersService {
       );
     }
 
+    await this.usersRepositoryService.updateUserInfo(
+      plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
+      plainToInstance(UsersEntity, { visitDate: new Date() }),
+    );
+
     const jwt = await this.authService.getJwt(
       { ...snsInfo.usersEntity },
       ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
@@ -47,7 +52,7 @@ export class UsersService {
     token: string,
   ): Promise<FindUserSnsInfoHandlerResponse> {
     let id: number;
-    let usersEntity: UsersEntity;
+    let usersEntity: UsersEntity | null;
 
     switch (usersSnsType) {
       case TypeUsersSns.KAKAO: {
