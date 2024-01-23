@@ -36,7 +36,7 @@ export class UsersEntity extends BaseEntity {
   })
   gender: TypeUsersGender;
 
-  @Column('enum', { enum: TypeUsersSns, nullable: true })
+  @Column('enum', { enum: TypeUsersSns, nullable: false })
   sns: TypeUsersSns;
 
   @Column('enum', {
@@ -61,30 +61,13 @@ export class UsersEntity extends BaseEntity {
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
   })
-  visitDate: Date;
+  visitDate?: Date;
 
   @Column('varchar', { length: 15, nullable: true })
   kakaoPk?: number;
 
   @Column('text', { nullable: true })
   comment?: string;
-
-  toObject(): Record<string, any> {
-    return {
-      id: this.id,
-      email: this.email,
-      name: this.name,
-      contact: this.contact,
-      experience: this.experience,
-      gender: this.gender,
-      sns: this.sns,
-      status: this.status,
-      inputDate: this.inputDate,
-      updateDate: this.updateDate,
-      visitDate: this.visitDate,
-      kakaoPk: this.kakaoPk,
-      comment: this.comment,
-    };
-  }
 }

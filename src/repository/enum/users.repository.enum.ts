@@ -6,7 +6,6 @@ export enum TypeUsersStatus {
 }
 
 export enum TypeUsersSns {
-  NORMAL = 'normal',
   KAKAO = 'kakao',
 }
 

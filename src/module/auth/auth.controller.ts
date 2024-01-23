@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseDataDto } from 'src/decorator/dto/response-data.dto';
 import { ResponseData } from 'src/decorator/response-data.decorator';
-import { AuthService } from './auth.service';
+import { KakaoClientService } from '../client/kakao.client.service';
 import {
   GetKakaoAUthInfoRequest,
   GetKakaoAuthInfoResponse,
@@ -11,7 +11,7 @@ import {
 @ApiTags('인증')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly kakaoClientService: KakaoClientService) {}
 
   @ApiOperation({
     description:
@@ -22,7 +22,7 @@ export class AuthController {
   async getkakaoAuthInfo(
     @Query() query: GetKakaoAUthInfoRequest,
   ): Promise<ResponseDataDto<GetKakaoAuthInfoResponse>> {
-    const result = await this.authService.getKakaoAuthInfo(
+    const result = await this.kakaoClientService.getKakaoAuthInfo(
       query.code,
       query.redirect,
     );

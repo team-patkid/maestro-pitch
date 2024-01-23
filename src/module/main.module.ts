@@ -24,12 +24,6 @@ import { UsersModule } from './users/users.module';
         return addTransactionalDataSource(new DataSource(options));
       },
     }),
-    JwtModule.registerAsync({
-      useFactory: () => ({
-        secret: ConfigService.getConfig().JWT.SECRET,
-        global: true,
-      }),
-    }),
     AuthModule,
     ClientModule,
     UsersModule,

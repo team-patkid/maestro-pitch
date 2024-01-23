@@ -12,7 +12,7 @@ export class UsersRepositoryService {
     private readonly userRepository: Repository<UsersEntity>,
   ) {}
 
-  async getMaestroPitchUsersInfo(dto: UsersEntity): Promise<UsersEntity> {
+  async getUsersInfo(dto: UsersEntity): Promise<UsersEntity> {
     const result = await this.userRepository.findOneBy({ ...dto });
 
     if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
@@ -20,21 +20,20 @@ export class UsersRepositoryService {
     return result;
   }
 
-  async findMaestroPitchUsersInfo(
-    dto: UsersEntity,
-  ): Promise<UsersEntity | null> {
+  async findUsersInfo(dto: UsersEntity): Promise<UsersEntity | null> {
     const result = await this.userRepository.findOneBy({ ...dto });
 
     return result;
   }
 
-  async upsertMaestroPitchUserInfo(dto: UsersEntity): Promise<UsersEntity> {
+  async upsertUserInfo(dto: UsersEntity): Promise<UsersEntity> {
+    console.log('DTO ::: ', dto);
     const result = await this.userRepository.save(dto);
-
+    console.log('RESULT ::: ', result);
     return result;
   }
 
-  async updateMaestroPitchUserInfo(
+  async updateUserInfo(
     where: UsersEntity,
     update: UsersEntity,
   ): Promise<UsersEntity> {
