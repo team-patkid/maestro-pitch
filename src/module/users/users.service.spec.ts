@@ -20,6 +20,7 @@ import {
   UsersLoginResult,
 } from './dto/users.dto';
 import { UsersService } from './users.service';
+import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -27,6 +28,7 @@ describe('UsersService', () => {
   let usersRepositoryService: SinonStubbedInstance<UsersRepositoryService>;
   let coreClientService: SinonStubbedInstance<CoreClientService>;
   let kakaoClientService: KakaoClientService;
+  let logExperienceRepositoryService: SinonStubbedInstance<LogExperienceRepositoryService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,11 +47,15 @@ describe('UsersService', () => {
     coreClientService = sinon.createStubInstance(CoreClientService);
     usersRepositoryService = sinon.createStubInstance(UsersRepositoryService);
     kakaoClientService = new KakaoClientService(coreClientService);
+    logExperienceRepositoryService = sinon.createStubInstance(
+      LogExperienceRepositoryService,
+    );
 
     usersService = new UsersService(
       usersRepositoryService,
       authService,
       kakaoClientService,
+      logExperienceRepositoryService,
     );
   });
 
@@ -139,6 +145,10 @@ describe('UsersService', () => {
 
     usersRepositoryService.findUsersInfo.resolves(null);
 
+    logExperienceRepositoryService.findLoginExperienceInToday.resolves(null);
+
+    logExperienceRepositoryService.insertLogExperience.resolves(null);
+
     const token = uuidV4();
     const typeUsersSns = TypeUsersSns.KAKAO;
 
@@ -178,6 +188,10 @@ describe('UsersService', () => {
     usersRepositoryService.findUsersInfo.resolves(
       createUsersEntity({ email: emailInDb }),
     );
+
+    logExperienceRepositoryService.findLoginExperienceInToday.resolves(null);
+
+    logExperienceRepositoryService.insertLogExperience.resolves(null);
 
     const token = uuidV4();
     const typeUsersSns = TypeUsersSns.KAKAO;

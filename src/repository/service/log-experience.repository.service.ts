@@ -18,7 +18,7 @@ export class LogExperienceRepositoryService {
 
   async findLoginExperienceInToday(
     userId: number,
-  ): Promise<LogExperienceEntity> {
+  ): Promise<LogExperienceEntity | null> {
     const result = await this.logExperienceRepository.findOneBy({
       userId,
       activity: TypeLogExperienceActivity.LOGIN,
@@ -28,6 +28,19 @@ export class LogExperienceRepositoryService {
       ),
     });
 
+    if (!result) return null;
+
     return plainToInstance(LogExperienceEntity, result);
+  }
+
+  async insertLoginExperienceUntilToday(userId: number) {
+    const logExperienceEntity = new LogExperienceEntity();
+
+    const loginExperienceInfo = await this.findLoginExperienceInToday(userId);
+
+    if (!loginExperienceInfo) {
+      logExperienceEntity.setLoginExperienceInfo(userId);
+      await this.insertLogExperience(logExperienceEntity);
+    }
   }
 }

@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UsersEntity } from './users.entity';
 import {
   MaestroLogExperienceActivityPoint,
   TypeLogExperienceActivity,
   TypeLogExperienceOperation,
   TypeLogExperienceStatus,
 } from '../enum/log-experience.repository.enum';
+import { UsersEntity } from './users.entity';
 
 @Entity('log_experience')
 export class LogExperienceEntity extends BaseEntity {
@@ -77,13 +77,12 @@ export class LogExperienceEntity extends BaseEntity {
     });
   }
 
-  getLoginExperienceInfo(userId: number): LogExperienceEntity {
-    return LogExperienceEntity.from(
-      userId,
-      MaestroLogExperienceActivityPoint[TypeLogExperienceActivity.LOGIN],
-      TypeLogExperienceActivity.LOGIN,
-      TypeLogExperienceOperation.PLUS,
-    );
+  setLoginExperienceInfo(userId: number) {
+    this.userId = userId;
+    this.point =
+      MaestroLogExperienceActivityPoint[TypeLogExperienceActivity.LOGIN];
+    this.activity = TypeLogExperienceActivity.LOGIN;
+    this.operation = TypeLogExperienceOperation.PLUS;
   }
 
   @BeforeInsert()

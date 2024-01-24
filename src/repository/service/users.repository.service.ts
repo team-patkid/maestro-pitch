@@ -27,9 +27,7 @@ export class UsersRepositoryService {
   }
 
   async upsertUserInfo(dto: UsersEntity): Promise<UsersEntity> {
-    console.log('DTO ::: ', dto);
     const result = await this.userRepository.save(dto);
-    console.log('RESULT ::: ', result);
     return result;
   }
 
@@ -37,11 +35,15 @@ export class UsersRepositoryService {
     where: UsersEntity,
     update: UsersEntity,
   ): Promise<UsersEntity> {
-    await this.userRepository.update({ ...where }, update);
+    await this.userRepository.update(
+      Object.fromEntries(Object.entries(where).filter(([_, value]) => value)),
+      update,
+    );
 
     const result = await this.userRepository.findOne({
       where: { ...where },
     });
+
     if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
 
     return result;

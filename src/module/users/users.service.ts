@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { ConfigService } from 'src/config/config.service';
 import { UsersEntity } from 'src/repository/entity/users.entity';
 import { TypeUsersSns } from 'src/repository/enum/users.repository.enum';
+import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { AuthService } from '../auth/auth.service';
 import { KakaoClientService } from '../client/kakao.client.service';
@@ -17,6 +18,7 @@ export class UsersService {
     private readonly usersRepositoryService: UsersRepositoryService,
     private readonly authService: AuthService,
     private readonly kakaoClientService: KakaoClientService,
+    private readonly logExperienceRepositoryService: LogExperienceRepositoryService,
   ) {}
 
   async oauthLogin(
@@ -28,7 +30,6 @@ export class UsersService {
     if (!snsInfo.usersEntity) {
       snsInfo.usersEntity = await this.usersRepositoryService.upsertUserInfo(
         plainToInstance(UsersEntity, {
-          kakaoPk: snsInfo.snsId,
           sns: usersSnsType,
         }),
       );
@@ -37,6 +38,10 @@ export class UsersService {
     await this.usersRepositoryService.updateUserInfo(
       plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
       plainToInstance(UsersEntity, { visitDate: new Date() }),
+    );
+
+    await this.logExperienceRepositoryService.insertLoginExperienceUntilToday(
+      snsInfo.usersEntity.id,
     );
 
     const jwt = await this.authService.getJwt(
