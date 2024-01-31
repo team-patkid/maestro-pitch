@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./
+    container_name: maestro_api
+    expose:
+      - '3001'
+    networks:
+      - patkid-bridge
+networks:
+  patkid-bridge:
+    external: true
