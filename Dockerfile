@@ -1,3 +1,11 @@
+# build stage
+FROM node:18-alpine AS build
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
 # dev stage
 FROM node:18-alpine
 WORKDIR /usr/src/app
@@ -8,6 +16,5 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY jest.config.js ./
 COPY src ./src
-RUN npm install
 EXPOSE 3001
 CMD ["node", "dist/main.js"]
