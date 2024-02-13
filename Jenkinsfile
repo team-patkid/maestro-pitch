@@ -34,7 +34,7 @@ node {
           sh """
             ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
             cd projectP/maestro-pitch
-            sudo docker compose --env-file ./src/config/docker/.env.${env.BRANCH_NAME} up --build -d
+            sudo docker compose --env-file ./src/config/docker/.env.${BRANCH_NAME} up --build -d
           '
           """
         }
