@@ -2,7 +2,9 @@ version: '3.9'
 
 services:
   backend:
-    build: ./
+    build:
+      context: .
+      dockerfile: 'Dockerfile.${NODE_ENV}'
     container_name: maestro_api
     expose:
       - '3001'

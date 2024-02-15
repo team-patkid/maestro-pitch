@@ -24,7 +24,7 @@ node {
           sh """
             ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
             cd projectP/maestro-pitch
-            sudo docker compose -f docker-compose-test.yaml run backend npm run test
+            sudo docker compose -f docker-compose-test.yaml --env-file ./src/config/docker/.env.main run backend npm run test
           '
           """
         }
