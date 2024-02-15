@@ -19,12 +19,22 @@ node {
           """
         }
       }
+      stage('docker-build') {
+        sshagent (credentials: ['79ac0389-d078-4099-81e5-96bff12a2672']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
+            cd projectP/maestro-pitch
+            sudo docker compose --env-file ./src/config/docker/.env.${env.BRANCH_NAME} build
+          '
+          """
+        }
+      }
       stage('test-unit') {
         sshagent (credentials: ['79ac0389-d078-4099-81e5-96bff12a2672']) {
           sh """
             ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
             cd projectP/maestro-pitch
-            sudo docker compose -f docker-compose-test.yaml --env-file ./src/config/docker/.env.main run backend npm run test
+            sudo docker compose -f docker-compose-test.yaml --env-file ./src/config/docker/.env.${env.BRANCH_NAME} run backend npm run test
           '
           """
         }
@@ -34,7 +44,7 @@ node {
           sh """
             ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
             cd projectP/maestro-pitch
-            sudo docker compose --env-file ./src/config/docker/.env.${env.BRANCH_NAME} up --build -d
+            sudo docker compose --env-file ./src/config/docker/.env.${env.BRANCH_NAME} up -d
           '
           """
         }
