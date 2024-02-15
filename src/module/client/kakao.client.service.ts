@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from 'src/config/config.service';
+import { ErrorCode } from 'src/exception/enum/error.enum';
+import { ServiceError } from 'src/exception/service.error';
 import { CoreClientService } from './core.client.service';
 import { KakaoAuthInfo, KakaoUserInfo } from './dto/kakao.client.dto';
 
@@ -19,6 +21,13 @@ export class KakaoClientService {
         },
       },
     );
+
+    if (!response.result)
+      throw new ServiceError(
+        ErrorCode.KAKAO_CLIENT_ERROR,
+        response.errorResponse,
+      );
+
     return KakaoUserInfo.from(response.data);
   }
 
@@ -41,6 +50,12 @@ export class KakaoClientService {
             ['Content-type']: 'application/x-www-form-urlencoded;charset=utf-8',
           },
         },
+      );
+
+    if (!response.result)
+      throw new ServiceError(
+        ErrorCode.KAKAO_CLIENT_ERROR,
+        response.errorResponse,
       );
 
     return KakaoAuthInfo.from(response.data);
