@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { ErrorCode, ErrorMessage, ErrorStatus } from './enum/error.enum';
 
 export class ServiceError extends HttpException {
@@ -7,9 +7,21 @@ export class ServiceError extends HttpException {
       {
         message: ErrorMessage[code],
         code,
+        error: error ? { cause: error } : {},
       },
       ErrorStatus[code],
-      error ? { cause: error } : {},
+    );
+  }
+}
+
+export class HttpError extends HttpException {
+  constructor(code: ErrorCode, status: HttpStatus) {
+    super(
+      {
+        message: ErrorMessage[code],
+        code,
+      },
+      status,
     );
   }
 }
