@@ -39,21 +39,21 @@ export class UsersService {
       );
     }
 
-    await this.usersRepositoryService.updateUserInfo(
-      plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
-      plainToInstance(UsersEntity, { visitDate: new Date() }),
-    );
-
     await this.logExperienceRepositoryService.insertLoginExperienceUntilToday(
       snsInfo.usersEntity.id,
     );
 
+    const userInfo = await this.usersRepositoryService.updateUserInfo(
+      plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
+      plainToInstance(UsersEntity, { visitDate: new Date() }),
+    );
+
     const jwt = await this.authService.getJwt(
-      { ...snsInfo.usersEntity },
+      { ...userInfo },
       ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
     );
 
-    return UsersLoginResult.from(snsInfo.usersEntity, jwt);
+    return UsersLoginResult.from(userInfo, jwt);
   }
 
   async findUserSnsInfoHandler(
