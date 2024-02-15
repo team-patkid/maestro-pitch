@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { ConfigService } from 'src/config/config.service';
 import { UsersEntity } from 'src/repository/entity/users.entity';
-import { TypeUsersSns } from 'src/repository/enum/users.repository.enum';
+import {
+  TypeUsersSns,
+  TypeUsersStatus,
+} from 'src/repository/enum/users.repository.enum';
 import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { AuthService } from '../auth/auth.service';
 import { KakaoClientService } from '../client/kakao.client.service';
 import {
   FindUserSnsInfoHandlerResponse,
+  NormalUserDto,
   UsersLoginResult,
 } from './dto/users.dto';
 
@@ -71,5 +75,22 @@ export class UsersService {
     }
 
     return { snsId: id, usersEntity };
+  }
+
+  async patchNormalUserAndGetNormalJwt(
+    id: number,
+    dto: NormalUserDto,
+  ): Promise<string> {
+    const normalUserInfo = await this.usersRepositoryService.updateUserInfo(
+      plainToClass(UsersEntity, { id }),
+      plainToClass(UsersEntity, { ...dto, status: TypeUsersStatus.NORMAL }),
+    );
+
+    const jwt = await this.authService.getJwt(
+      { ...normalUserInfo },
+      ConfigService.getConfig().JWT.LOGIN_EXPIRE_IN,
+    );
+
+    return jwt;
   }
 }

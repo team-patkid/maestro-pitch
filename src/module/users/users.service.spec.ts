@@ -17,10 +17,12 @@ import { KakaoUserInfo } from '../client/dto/kakao.client.dto';
 import { KakaoClientService } from '../client/kakao.client.service';
 import {
   FindUserSnsInfoHandlerResponse,
+  NormalUserDto,
   UsersLoginResult,
 } from './dto/users.dto';
 import { UsersService } from './users.service';
 import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
+import { plainToClass } from 'class-transformer';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -101,6 +103,22 @@ describe('UsersService', () => {
     usersEntity.comment = ctx.comment ?? uuidV4();
 
     return usersEntity;
+  };
+
+  const createNormalUserDto = (ctx: {
+    email?: string;
+    name?: string;
+    contact?: string;
+    gender?: TypeUsersGender;
+  }): NormalUserDto => {
+    const dto = new NormalUserDto();
+
+    dto.email = ctx.email ?? 'foo@bar.com';
+    dto.name = ctx.name ?? uuidV4();
+    dto.contact = ctx.contact ?? uuidV4();
+    dto.gender = ctx.gender ?? TypeUsersGender.MAN;
+
+    return dto;
   };
 
   it('user sns type 별로 user info 가 나눠진다.', async () => {
@@ -206,5 +224,23 @@ describe('UsersService', () => {
     );
 
     expect(decodeJwt.email).toBe(emailInDb);
+  });
+
+  it('미인증 유저는 추가 정보를 통해 정회원으로 가입 한다', async () => {
+    const dto = createNormalUserDto({});
+    const id = 1;
+
+    // Ready
+    usersRepositoryService.updateUserInfo.resolves(
+      createUsersEntity({ status: TypeUsersStatus.NORMAL }),
+    );
+
+    // When
+    const response = await usersService.patchNormalUserAndGetNormalJwt(id, dto);
+
+    // Then
+    const payload = await authService.decodeJwt<UsersEntity>(response);
+
+    expect(payload.status).toBe(TypeUsersStatus.NORMAL);
   });
 });
