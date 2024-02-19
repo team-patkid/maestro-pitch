@@ -4,7 +4,9 @@ services:
   backend:
     build:
       context: .
-      dockerfile: 'Dockerfile.${NODE_ENV}'
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV}
     container_name: maestro_api
     expose:
       - '3001'

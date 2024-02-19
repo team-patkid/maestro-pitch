@@ -9,8 +9,6 @@ RUN npm run build
 # dev stage
 FROM node:18-alpine
 WORKDIR /usr/src/app
-ARG NODE_ENV=dev
-ENV NODE_ENV=${NODE_ENV}
 COPY --from=build /usr/src/app/dist/src ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY package*.json ./
