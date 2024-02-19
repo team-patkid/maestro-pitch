@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import { ConfigService } from 'src/config/config.service';
 import { UsersEntity } from 'src/repository/entity/users.entity';
@@ -9,6 +10,7 @@ import {
   TypeUsersSns,
   TypeUsersStatus,
 } from 'src/repository/enum/users.repository.enum';
+import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { v4 as uuidV4 } from 'uuid';
 import { AuthService } from '../auth/auth.service';
@@ -21,8 +23,6 @@ import {
   UsersLoginResult,
 } from './dto/users.dto';
 import { UsersService } from './users.service';
-import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
-import { plainToClass } from 'class-transformer';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -74,6 +74,7 @@ describe('UsersService', () => {
   };
 
   const createUsersEntity = (ctx: {
+    id?: number;
     email?: string;
     name?: string;
     contact?: string;
@@ -89,6 +90,7 @@ describe('UsersService', () => {
   }): UsersEntity => {
     const usersEntity = new UsersEntity();
 
+    usersEntity.id = ctx.id ?? 100;
     usersEntity.email = ctx.email ?? `${uuidV4()}@kakao.com`;
     usersEntity.name = ctx.email ?? uuidV4();
     usersEntity.contact = ctx.contact ?? uuidV4();
@@ -142,8 +144,11 @@ describe('UsersService', () => {
   });
 
   it('kakao 로그인으로 간편 회원가입이 가능하다.', async () => {
+    // Ready
     const id = 20000;
     const email = 'foo@bar.com';
+    const token = uuidV4();
+    const typeUsersSns = TypeUsersSns.KAKAO;
 
     coreClientService.sendGetRequest
       .withArgs(
@@ -157,19 +162,25 @@ describe('UsersService', () => {
         status: HttpStatus.OK,
       });
 
-    usersRepositoryService.upsertUserInfo.resolves(
+    usersRepositoryService.insertUserInfo.resolves(
       createUsersEntity({ email }),
     );
 
-    usersRepositoryService.findUsersInfo.resolves(null);
+    usersRepositoryService.getUsersInfo.resolves(createUsersEntity({ email }));
 
+    usersRepositoryService.findUsersInfo.resolves(null);
+    usersRepositoryService.insertUserInfo.resolves(
+      createUsersEntity({ email }),
+    );
     logExperienceRepositoryService.findLoginExperienceInToday.resolves(null);
 
     logExperienceRepositoryService.insertLogExperience.resolves(null);
 
-    const token = uuidV4();
-    const typeUsersSns = TypeUsersSns.KAKAO;
+    usersRepositoryService.updateUserInfo.resolves(
+      createUsersEntity({ email }),
+    );
 
+    // When
     const signUpResult: UsersLoginResult = await usersService.oauthLogin(
       token,
       typeUsersSns,
@@ -179,6 +190,7 @@ describe('UsersService', () => {
       signUpResult.jwt,
     );
 
+    // Then
     expect(decodeJwt.email).toBe(email);
   });
 
@@ -199,11 +211,19 @@ describe('UsersService', () => {
         status: HttpStatus.OK,
       });
 
-    usersRepositoryService.upsertUserInfo.resolves(
+    usersRepositoryService.insertUserInfo.resolves(
+      createUsersEntity({ email }),
+    );
+
+    usersRepositoryService.updateUserInfo.resolves(
       createUsersEntity({ email }),
     );
 
     usersRepositoryService.findUsersInfo.resolves(
+      createUsersEntity({ email: emailInDb }),
+    );
+
+    usersRepositoryService.getUsersInfo.resolves(
       createUsersEntity({ email: emailInDb }),
     );
 

@@ -12,8 +12,8 @@ export class UsersRepositoryService {
     private readonly userRepository: Repository<UsersEntity>,
   ) {}
 
-  async getUsersInfo(dto: UsersEntity): Promise<UsersEntity> {
-    const result = await this.userRepository.findOneBy({ ...dto });
+  async getUsersInfo(entity: UsersEntity): Promise<UsersEntity> {
+    const result = await this.userRepository.findOneBy({ ...entity });
 
     if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
 
@@ -26,8 +26,15 @@ export class UsersRepositoryService {
     return result;
   }
 
-  async upsertUserInfo(dto: UsersEntity): Promise<UsersEntity> {
-    const result = await this.userRepository.save(dto);
+  async insertUserInfo(dto: UsersEntity): Promise<UsersEntity> {
+    const insertResult = await this.userRepository.insert(dto);
+
+    const result = await this.userRepository.findOne({
+      where: { id: insertResult.identifiers[0].id },
+    });
+
+    if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
+
     return result;
   }
 

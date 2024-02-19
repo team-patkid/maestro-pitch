@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { ConfigService } from 'src/config/config.service';
+import { TransactionalExceptTest } from 'src/decorator/transactional-except-test';
 import { UsersEntity } from 'src/repository/entity/users.entity';
 import {
   TypeUsersSns,
@@ -25,6 +26,7 @@ export class UsersService {
     private readonly logExperienceRepositoryService: LogExperienceRepositoryService,
   ) {}
 
+  @TransactionalExceptTest()
   async oauthLogin(
     usersSnsType: TypeUsersSns,
     token: string,
@@ -32,10 +34,16 @@ export class UsersService {
     const snsInfo = await this.findUserSnsInfoHandler(usersSnsType, token);
 
     if (!snsInfo.usersEntity) {
-      snsInfo.usersEntity = await this.usersRepositoryService.upsertUserInfo(
+      snsInfo.usersEntity = await this.usersRepositoryService.insertUserInfo(
         plainToInstance(UsersEntity, {
           sns: usersSnsType,
+          visitDate: new Date(),
         }),
+      );
+    } else {
+      await this.usersRepositoryService.updateUserInfo(
+        plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
+        plainToInstance(UsersEntity, { visitDate: new Date() }),
       );
     }
 
@@ -43,9 +51,8 @@ export class UsersService {
       snsInfo.usersEntity.id,
     );
 
-    const userInfo = await this.usersRepositoryService.updateUserInfo(
+    const userInfo = await this.usersRepositoryService.getUsersInfo(
       plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
-      plainToInstance(UsersEntity, { visitDate: new Date() }),
     );
 
     const jwt = await this.authService.getJwt(

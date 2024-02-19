@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Configuration } from './type/config.type';
-import { config } from './Dev';
+import dev from './Dev';
+import local from './Local';
 import { SupportNodeEnv } from './enum/config.enum';
 
 @Injectable()
@@ -9,11 +10,12 @@ export class ConfigService {
 
   static getConfig(): Configuration {
     switch (process.env.NODE_ENV) {
+      case SupportNodeEnv.LOCAL:
+        return local;
       case SupportNodeEnv.DEV:
-        return config;
-        break;
+        return dev;
       default:
-        return config;
+        return dev;
     }
   }
 }
