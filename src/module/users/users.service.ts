@@ -58,26 +58,27 @@ export class UsersService {
     let usersEntity: UsersEntity | null;
 
     switch (usersSnsType) {
-      case TypeUsersSns.KAKAO: {
-        id = (await this.kakaoClientService.getKakaoUserInfo(token)).id;
-        usersEntity = await this.usersRepositoryService.findUsersInfo(
-          plainToInstance(UsersEntity, { kakaoPk: id }),
-        );
-
-        if (!usersEntity) {
-          usersEntity = await this.usersRepositoryService.insertUserInfo(
-            plainToInstance(UsersEntity, {
-              kakaoPk: id,
-              sns: usersSnsType,
-              visitDate: new Date(),
-            }),
+      case TypeUsersSns.KAKAO:
+        {
+          id = (await this.kakaoClientService.getKakaoUserInfo(token)).id;
+          usersEntity = await this.usersRepositoryService.findUsersInfo(
+            plainToInstance(UsersEntity, { kakaoPk: id }),
           );
+
+          if (!usersEntity) {
+            usersEntity = await this.usersRepositoryService.insertUserInfo(
+              plainToInstance(UsersEntity, {
+                kakaoPk: id,
+                sns: usersSnsType,
+                visitDate: new Date(),
+              }),
+            );
+          }
         }
-      }
+        break;
       default:
         break;
     }
-
     return { snsId: id, usersEntity };
   }
 

@@ -162,16 +162,12 @@ describe('UsersService', () => {
         status: HttpStatus.OK,
       });
 
-    usersRepositoryService.insertUserInfo.resolves(
-      createUsersEntity({ email }),
-    );
-
-    usersRepositoryService.getUsersInfo.resolves(createUsersEntity({ email }));
-
     usersRepositoryService.findUsersInfo.resolves(null);
+
     usersRepositoryService.insertUserInfo.resolves(
       createUsersEntity({ email }),
     );
+
     logExperienceRepositoryService.findLoginExperienceInToday.resolves(null);
 
     logExperienceRepositoryService.insertLogExperience.resolves(null);
@@ -182,8 +178,8 @@ describe('UsersService', () => {
 
     // When
     const signUpResult: UsersLoginResult = await usersService.oauthLogin(
-      token,
       typeUsersSns,
+      token,
     );
 
     const decodeJwt = await authService.decodeJwt<UsersEntity>(
@@ -211,19 +207,11 @@ describe('UsersService', () => {
         status: HttpStatus.OK,
       });
 
-    usersRepositoryService.insertUserInfo.resolves(
-      createUsersEntity({ email }),
-    );
-
     usersRepositoryService.updateUserInfo.resolves(
-      createUsersEntity({ email }),
-    );
-
-    usersRepositoryService.findUsersInfo.resolves(
       createUsersEntity({ email: emailInDb }),
     );
 
-    usersRepositoryService.getUsersInfo.resolves(
+    usersRepositoryService.findUsersInfo.resolves(
       createUsersEntity({ email: emailInDb }),
     );
 
