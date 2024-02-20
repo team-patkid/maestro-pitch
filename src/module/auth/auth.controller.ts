@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseDataDto } from 'src/decorator/dto/response-data.dto';
 import { ResponseData } from 'src/decorator/response-data.decorator';
@@ -18,6 +18,7 @@ export class AuthController {
       'code 값 얻는 URL : https://kauth.kakao.com/oauth/authorize?client_id=a22d2982d2b7327e97be5ed6b847b42b&response_type=code&redirect_uri=https://maestro-api.patkid.kr/health',
   })
   @Get('/kakao')
+  @HttpCode(HttpStatus.OK)
   @ResponseData(GetKakaoAuthInfoResponse)
   async getkakaoAuthInfo(
     @Query() query: GetKakaoAUthInfoRequest,

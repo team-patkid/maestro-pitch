@@ -33,26 +33,13 @@ export class UsersService {
   ): Promise<UsersLoginResult> {
     const snsInfo = await this.findUserSnsInfoHandler(usersSnsType, token);
 
-    if (!snsInfo.usersEntity) {
-      snsInfo.usersEntity = await this.usersRepositoryService.insertUserInfo(
-        plainToInstance(UsersEntity, {
-          sns: usersSnsType,
-          visitDate: new Date(),
-        }),
-      );
-    } else {
-      await this.usersRepositoryService.updateUserInfo(
-        plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
-        plainToInstance(UsersEntity, { visitDate: new Date() }),
-      );
-    }
-
     await this.logExperienceRepositoryService.insertLoginExperienceUntilToday(
       snsInfo.usersEntity.id,
     );
 
-    const userInfo = await this.usersRepositoryService.getUsersInfo(
+    const userInfo = await this.usersRepositoryService.updateUserInfo(
       plainToInstance(UsersEntity, { id: snsInfo.usersEntity.id }),
+      plainToInstance(UsersEntity, { visitDate: new Date() }),
     );
 
     const jwt = await this.authService.getJwt(
@@ -76,6 +63,16 @@ export class UsersService {
         usersEntity = await this.usersRepositoryService.findUsersInfo(
           plainToInstance(UsersEntity, { kakaoPk: id }),
         );
+
+        if (!usersEntity) {
+          usersEntity = await this.usersRepositoryService.insertUserInfo(
+            plainToInstance(UsersEntity, {
+              kakaoPk: id,
+              sns: usersSnsType,
+              visitDate: new Date(),
+            }),
+          );
+        }
       }
       default:
         break;

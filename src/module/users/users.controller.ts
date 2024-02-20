@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
   Inject,
   Patch,
   Post,
@@ -11,6 +13,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ResponseDataDto } from 'src/decorator/dto/response-data.dto';
 import { ResponseData } from 'src/decorator/response-data.decorator';
+import { ResponseError } from 'src/decorator/response-error.decorator';
+import { ErrorCode } from 'src/exception/enum/error.enum';
 import { AssociateGuard } from 'src/guard/associate.guard';
 import { AuthHeader } from '../auth/enum/auth.enum';
 import {
@@ -37,6 +41,7 @@ export class UsersController {
     description:
       'SNS (kakao, X, google) 등으로 로그인 및 간편 회원가입을 한다.',
   })
+  @HttpCode(HttpStatus.OK)
   @Post('sns/login')
   @ResponseData(PostUsersSnsLoginResponse)
   async postUsersSnsLoign(
@@ -52,9 +57,18 @@ export class UsersController {
     description: '미인증 유저 대상으로 정회원 가입을 한다',
   })
   @Patch('normal')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AssociateGuard)
   @ApiBearerAuth(AuthHeader.BEARER)
   @ResponseData(PatchNormalUserResponse)
+  @ResponseError([
+    ErrorCode.ALREADY_AUTHENTICATED,
+    ErrorCode.NOT_ASSOCIATE_USER,
+    ErrorCode.UNAUTHORIZED,
+    ErrorCode.JWT_UNABLE_VERIFY,
+    ErrorCode.NOT_FOUND_CONTENT,
+    ErrorCode.INTERNAL_SERVER_ERROR,
+  ])
   async patchNormalMemeber(
     @Body() body: PatchNormalUserRequest,
   ): Promise<ResponseDataDto<PatchNormalUserResponse>> {

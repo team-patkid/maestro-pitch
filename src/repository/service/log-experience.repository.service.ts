@@ -37,7 +37,7 @@ export class LogExperienceRepositoryService {
     const logExperienceEntity = new LogExperienceEntity();
 
     const loginExperienceInfo = await this.findLoginExperienceInToday(userId);
-
+    console.log('loginExperienceInfo', loginExperienceInfo);
     if (!loginExperienceInfo) {
       logExperienceEntity.setLoginExperienceInfo(userId);
       await this.insertLogExperience(logExperienceEntity);

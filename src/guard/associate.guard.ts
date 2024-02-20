@@ -25,7 +25,7 @@ export class AssociateGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const jwt = request.headers.authorization(' ')[1];
+    const jwt = request.headers.authorization.split(' ')[1];
 
     if (!jwt)
       throw new HttpError(
@@ -38,6 +38,12 @@ export class AssociateGuard implements CanActivate {
     const userInfo = await this.usersRepositoryService.getUsersInfo(
       plainToClass(UsersEntity, { id: payload.id }),
     );
+
+    if (userInfo.status === TypeUsersStatus.NORMAL)
+      throw new HttpError(
+        ErrorCode.ALREADY_AUTHENTICATED,
+        ErrorStatus[ErrorCode.ALREADY_AUTHENTICATED],
+      );
 
     if (userInfo.status !== TypeUsersStatus.ASSOCIATE)
       throw new HttpError(
