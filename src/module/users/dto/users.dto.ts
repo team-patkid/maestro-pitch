@@ -50,6 +50,7 @@ export class PostUsersSnsLoginResponse {
 export class PatchNormalUserRequest {
   @ApiProperty({
     description: '사용할 email',
+    example: 'foo@bar.com',
   })
   @IsEmail()
   @IsDefined()
@@ -57,6 +58,7 @@ export class PatchNormalUserRequest {
 
   @ApiProperty({
     description: '유저 이름',
+    example: '홍길동',
   })
   @IsString()
   @IsDefined()
@@ -64,6 +66,7 @@ export class PatchNormalUserRequest {
 
   @ApiProperty({
     description: '전화번호',
+    example: '010-1234-5678',
   })
   @IsString()
   @IsDefined()
@@ -71,6 +74,7 @@ export class PatchNormalUserRequest {
 
   @ApiProperty({
     description: '성별',
+    example: TypeUsersGender.MAN,
   })
   @IsEnum(TypeUsersGender)
   @IsDefined()
@@ -78,6 +82,11 @@ export class PatchNormalUserRequest {
 
   @ApiProperty({
     description: '유저 거주지 주소',
+    example: [
+      '서울특별시 강남구 역삼동 123-456',
+      '서울특별시 강남구 역삼동 123-456',
+      '서울특별시 강남구 역삼동 123-456',
+    ],
   })
   @IsArray()
   @IsDefined()

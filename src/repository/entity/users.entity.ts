@@ -75,5 +75,5 @@ export class UsersEntity extends BaseEntity {
   comment?: string;
 
   @OneToMany(() => AddressEntity, (address) => address.user)
-  address?: AddressEntity;
+  address?: Array<AddressEntity>;
 }
