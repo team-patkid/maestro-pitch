@@ -75,8 +75,12 @@ export class UsersController {
     const result = await this.usersService.patchNormalUserAndGetNormalJwt(
       this.req.userEntity.id,
       NormalUserDto.from({
-        ...body,
+        email: body.email,
+        name: body.name,
+        contact: body.contact,
+        gender: body.gender,
       }),
+      body.address,
     );
 
     return new ResponseDataDto({ jwt: result });

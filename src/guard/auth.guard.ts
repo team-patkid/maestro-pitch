@@ -1,5 +1,4 @@
 import { CanActivate, ExecutionContext, Inject } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { ErrorCode, ErrorStatus } from 'src/exception/enum/error.enum';
 import { HttpError } from 'src/exception/service.error';
 import { AuthService } from 'src/module/auth/auth.service';
@@ -32,8 +31,8 @@ export class AuthGuard implements CanActivate {
 
     const payload = await this.authService.decodeJwt<UsersEntity>(jwt);
 
-    const userInfo = await this.usersRepositoryService.findUsersInfo(
-      plainToClass(UsersEntity, { id: payload.id }),
+    const userInfo = await this.usersRepositoryService.findUsersInfoById(
+      payload.id,
     );
 
     if (!userInfo || userInfo.status !== TypeUsersStatus.NORMAL) {

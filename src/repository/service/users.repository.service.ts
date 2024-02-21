@@ -12,16 +12,31 @@ export class UsersRepositoryService {
     private readonly userRepository: Repository<UsersEntity>,
   ) {}
 
-  async getUsersInfo(entity: UsersEntity): Promise<UsersEntity> {
-    const result = await this.userRepository.findOneBy({ ...entity });
+  async getUsersInfoById(id: number): Promise<UsersEntity> {
+    const result = await this.userRepository.findOne({
+      where: { id },
+      relations: ['address'],
+    });
 
     if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
 
     return result;
   }
 
-  async findUsersInfo(dto: UsersEntity): Promise<UsersEntity | null> {
-    const result = await this.userRepository.findOneBy({ ...dto });
+  async findUsersInfoById(id: number): Promise<UsersEntity | null> {
+    const result = await this.userRepository.findOne({
+      where: { id },
+      relations: ['address'],
+    });
+
+    return result;
+  }
+
+  async findUsersInfoByKakaoPk(kakaoPk: string): Promise<UsersEntity | null> {
+    const result = await this.userRepository.findOne({
+      where: { kakaoPk },
+      relations: ['address'],
+    });
 
     return result;
   }
@@ -47,9 +62,7 @@ export class UsersRepositoryService {
       update,
     );
 
-    const result = await this.userRepository.findOne({
-      where: { ...where },
-    });
+    const result = await this.findUsersInfoById(where.id);
 
     if (!result) throw new ServiceError(ErrorCode.NOT_FOUND_CONTENT);
 

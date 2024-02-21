@@ -3,6 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +13,7 @@ import {
   TypeUsersSns,
   TypeUsersStatus,
 } from '../enum/users.repository.enum';
+import { AddressEntity } from './address.entity';
 
 @Entity('users')
 export class UsersEntity extends BaseEntity {
@@ -66,8 +69,11 @@ export class UsersEntity extends BaseEntity {
   visitDate?: Date;
 
   @Column('varchar', { length: 15, nullable: true })
-  kakaoPk?: number;
+  kakaoPk?: string;
 
   @Column('text', { nullable: true })
   comment?: string;
+
+  @OneToMany(() => AddressEntity, (address) => address.user)
+  address?: AddressEntity;
 }

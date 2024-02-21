@@ -12,6 +12,10 @@ export class KakaoUserInfo {
   }): KakaoUserInfo {
     return plainToInstance(this, ctx);
   }
+
+  get kakaoPk(): string {
+    return this.id.toString();
+  }
 }
 
 export class KakaoAuthInfo {

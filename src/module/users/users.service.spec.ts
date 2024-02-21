@@ -1,7 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import { ConfigService } from 'src/config/config.service';
 import { UsersEntity } from 'src/repository/entity/users.entity';
@@ -17,12 +16,9 @@ import { AuthService } from '../auth/auth.service';
 import { CoreClientService } from '../client/core.client.service';
 import { KakaoUserInfo } from '../client/dto/kakao.client.dto';
 import { KakaoClientService } from '../client/kakao.client.service';
-import {
-  FindUserSnsInfoHandlerResponse,
-  NormalUserDto,
-  UsersLoginResult,
-} from './dto/users.dto';
+import { NormalUserDto, UsersLoginResult } from './dto/users.dto';
 import { UsersService } from './users.service';
+import { AddressRepositoryService } from 'src/repository/service/address.repository.service';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -31,6 +27,7 @@ describe('UsersService', () => {
   let coreClientService: SinonStubbedInstance<CoreClientService>;
   let kakaoClientService: KakaoClientService;
   let logExperienceRepositoryService: SinonStubbedInstance<LogExperienceRepositoryService>;
+  let addressRepositoryService: SinonStubbedInstance<AddressRepositoryService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,12 +49,16 @@ describe('UsersService', () => {
     logExperienceRepositoryService = sinon.createStubInstance(
       LogExperienceRepositoryService,
     );
+    addressRepositoryService = sinon.createStubInstance(
+      AddressRepositoryService,
+    );
 
     usersService = new UsersService(
       usersRepositoryService,
       authService,
       kakaoClientService,
       logExperienceRepositoryService,
+      addressRepositoryService,
     );
   });
 
@@ -85,7 +86,7 @@ describe('UsersService', () => {
     inputDate?: Date;
     updateDate?: Date;
     visitDate?: Date;
-    kakaoPk?: number;
+    kakaoPk?: string;
     comment?: string;
   }): UsersEntity => {
     const usersEntity = new UsersEntity();
@@ -101,7 +102,7 @@ describe('UsersService', () => {
     usersEntity.inputDate = ctx.inputDate ?? new Date();
     usersEntity.updateDate = ctx.updateDate ?? new Date();
     usersEntity.visitDate = ctx.visitDate ?? new Date();
-    usersEntity.kakaoPk = ctx.kakaoPk ?? 172957;
+    usersEntity.kakaoPk = ctx.kakaoPk ?? uuidV4();
     usersEntity.comment = ctx.comment ?? uuidV4();
 
     return usersEntity;
@@ -123,26 +124,6 @@ describe('UsersService', () => {
     return dto;
   };
 
-  it('user sns type 별로 user info 가 나눠진다.', async () => {
-    const id = 20000;
-
-    coreClientService.sendGetRequest
-      .withArgs(sinon.match(/.*\/v1\/user\/access_token_info/))
-      .resolves({
-        data: createKakaoUserInfoDto({ id }),
-        result: true,
-        status: HttpStatus.OK,
-      });
-
-    const kakaoUsersSnsType = TypeUsersSns.KAKAO;
-    const token = uuidV4();
-
-    const kakaoUserSnsInfo: FindUserSnsInfoHandlerResponse =
-      await usersService.findUserSnsInfoHandler(kakaoUsersSnsType, token);
-
-    expect(kakaoUserSnsInfo.snsId).toBe(id);
-  });
-
   it('kakao 로그인으로 간편 회원가입이 가능하다.', async () => {
     // Ready
     const id = 20000;
@@ -162,7 +143,7 @@ describe('UsersService', () => {
         status: HttpStatus.OK,
       });
 
-    usersRepositoryService.findUsersInfo.resolves(null);
+    usersRepositoryService.findUsersInfoById.resolves(null);
 
     usersRepositoryService.insertUserInfo.resolves(
       createUsersEntity({ email }),
@@ -173,7 +154,7 @@ describe('UsersService', () => {
     logExperienceRepositoryService.insertLogExperience.resolves(null);
 
     usersRepositoryService.updateUserInfo.resolves(
-      createUsersEntity({ email }),
+      createUsersEntity({ email, id }),
     );
 
     // When
@@ -187,7 +168,7 @@ describe('UsersService', () => {
     );
 
     // Then
-    expect(decodeJwt.email).toBe(email);
+    expect(decodeJwt.id).toBe(id);
   });
 
   it('kakao 로그인 후 회원가입이 되어 있다면 있는 정보를 JWT 로 반환한다.', async () => {
@@ -208,10 +189,10 @@ describe('UsersService', () => {
       });
 
     usersRepositoryService.updateUserInfo.resolves(
-      createUsersEntity({ email: emailInDb }),
+      createUsersEntity({ id, email: emailInDb }),
     );
 
-    usersRepositoryService.findUsersInfo.resolves(
+    usersRepositoryService.findUsersInfoByKakaoPk.resolves(
       createUsersEntity({ email: emailInDb }),
     );
 
@@ -231,12 +212,13 @@ describe('UsersService', () => {
       signUpResult.jwt,
     );
 
-    expect(decodeJwt.email).toBe(emailInDb);
+    expect(decodeJwt.id).toBe(id);
   });
 
   it('미인증 유저는 추가 정보를 통해 정회원으로 가입 한다', async () => {
     const dto = createNormalUserDto({});
     const id = 1;
+    const address = ['서울', '강남'];
 
     // Ready
     usersRepositoryService.updateUserInfo.resolves(
@@ -244,7 +226,11 @@ describe('UsersService', () => {
     );
 
     // When
-    const response = await usersService.patchNormalUserAndGetNormalJwt(id, dto);
+    const response = await usersService.patchNormalUserAndGetNormalJwt(
+      id,
+      dto,
+      address,
+    );
 
     // Then
     const payload = await authService.decodeJwt<UsersEntity>(response);

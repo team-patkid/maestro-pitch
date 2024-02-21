@@ -4,7 +4,6 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
 import { ErrorCode, ErrorStatus } from 'src/exception/enum/error.enum';
 import { HttpError } from 'src/exception/service.error';
 import { AuthService } from 'src/module/auth/auth.service';
@@ -35,8 +34,8 @@ export class AssociateGuard implements CanActivate {
 
     const payload = await this.authService.decodeJwt<UsersEntity>(jwt);
 
-    const userInfo = await this.usersRepositoryService.getUsersInfo(
-      plainToClass(UsersEntity, { id: payload.id }),
+    const userInfo = await this.usersRepositoryService.getUsersInfoById(
+      payload.id,
     );
 
     if (userInfo.status === TypeUsersStatus.NORMAL)

@@ -42,7 +42,7 @@ describe('AuthService', () => {
     inputDate?: Date;
     updateDate?: Date;
     visitDate?: Date;
-    kakaoPk?: number;
+    kakaoPk?: string;
     comment?: string;
   }): UsersEntity => {
     const usersEntity = new UsersEntity();
@@ -57,7 +57,7 @@ describe('AuthService', () => {
     usersEntity.inputDate = ctx.inputDate ?? new Date();
     usersEntity.updateDate = ctx.updateDate ?? new Date();
     usersEntity.visitDate = ctx.visitDate ?? new Date();
-    usersEntity.kakaoPk = ctx.kakaoPk ?? 172957;
+    usersEntity.kakaoPk = ctx.kakaoPk ?? uuidV4();
     usersEntity.comment = ctx.comment ?? uuidV4();
 
     return usersEntity;

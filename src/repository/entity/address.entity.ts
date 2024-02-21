@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -39,11 +40,11 @@ export class AddressEntity extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(() => UsersEntity, {
+  @ManyToOne(() => UsersEntity, (user) => user.address, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-    eager: true,
     createForeignKeyConstraints: process.env.NODE_ENV === 'test',
   })
+  @JoinColumn({ name: 'user_id' })
   user: UsersEntity;
 }

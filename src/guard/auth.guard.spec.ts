@@ -47,7 +47,7 @@ describe('AuthGuard', () => {
     inputDate?: Date;
     updateDate?: Date;
     visitDate?: Date;
-    kakaoPk?: number;
+    kakaoPk?: string;
     comment?: string;
   }): UsersEntity => {
     const usersEntity = new UsersEntity();
@@ -63,7 +63,7 @@ describe('AuthGuard', () => {
     usersEntity.inputDate = ctx.inputDate ?? new Date();
     usersEntity.updateDate = ctx.updateDate ?? new Date();
     usersEntity.visitDate = ctx.visitDate ?? new Date();
-    usersEntity.kakaoPk = ctx.kakaoPk ?? 172957;
+    usersEntity.kakaoPk = ctx.kakaoPk ?? uuidV4();
     usersEntity.comment = ctx.comment ?? uuidV4();
 
     return usersEntity;
@@ -95,7 +95,7 @@ describe('AuthGuard', () => {
         headers: { authorization: `Bearer ${jwt}` },
       });
 
-      usersRepositoryService.findUsersInfo.resolves(userEntity);
+      usersRepositoryService.findUsersInfoById.resolves(userEntity);
 
       // Act & Assert
       await expect(guard.canActivate(context)).rejects.toThrow(HttpError);
@@ -116,7 +116,7 @@ describe('AuthGuard', () => {
         headers: { authorization: `Bearer ${jwt}` },
       });
 
-      usersRepositoryService.findUsersInfo.resolves(userEntity);
+      usersRepositoryService.findUsersInfoById.resolves(userEntity);
 
       // Act
       await guard.canActivate(context);
@@ -144,7 +144,7 @@ describe('AuthGuard', () => {
         headers: { authorization: `Bearer ${jwt}` },
       });
 
-      usersRepositoryService.findUsersInfo.resolves(userEntity);
+      usersRepositoryService.findUsersInfoById.resolves(userEntity);
       // Act
       const result = await guard.canActivate(context);
 

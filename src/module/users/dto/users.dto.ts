@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { IsDefined, IsEmail, IsEnum, IsString } from 'class-validator';
+import { IsArray, IsDefined, IsEmail, IsEnum, IsString } from 'class-validator';
 import { UsersEntity } from 'src/repository/entity/users.entity';
 import {
   TypeUsersGender,
@@ -14,11 +14,6 @@ export class UsersLoginResult {
   static from(userInfo: UsersEntity, jwt: string): UsersLoginResult {
     return plainToInstance(UsersLoginResult, { userInfo, jwt });
   }
-}
-
-export class FindUserSnsInfoHandlerResponse {
-  snsId: number;
-  usersEntity?: UsersEntity;
 }
 
 export class PostUsersSnsLoginRequest {
@@ -80,6 +75,13 @@ export class PatchNormalUserRequest {
   @IsEnum(TypeUsersGender)
   @IsDefined()
   gender: TypeUsersGender;
+
+  @ApiProperty({
+    description: '유저 거주지 주소',
+  })
+  @IsArray()
+  @IsDefined()
+  address: Array<string>;
 }
 
 export class NormalUserDto {
