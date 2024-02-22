@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryEntity } from '../entity/category.entity';
-import { TypeMaestroCategoryStatus } from '../enum/category.enum';
+import { TypeMaestroCategoryStatus } from '../enum/category.repository.enum';
 
 @Injectable()
 export class CategoryRepositoryService {

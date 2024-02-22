@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { TypeMaestroCategoryStatus } from '../enum/category.enum';
+import { TypeMaestroCategoryStatus } from '../enum/category.repository.enum';
 
 @Entity('category')
 export class CategoryEntity extends BaseEntity {

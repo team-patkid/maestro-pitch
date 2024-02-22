@@ -1,6 +1,6 @@
 import sinon, { SinonStubbedInstance } from 'sinon';
 import { CategoryEntity } from 'src/repository/entity/category.entity';
-import { TypeMaestroCategoryStatus } from 'src/repository/enum/category.enum';
+import { TypeMaestroCategoryStatus } from 'src/repository/enum/category.repository.enum';
 import { CategoryRepositoryService } from 'src/repository/service/category.repository.service';
 import { v4 as uuidV4 } from 'uuid';
 import { CategoryService } from './category.service';
