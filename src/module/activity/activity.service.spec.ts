@@ -11,7 +11,10 @@ import {
 import { IActivityContent } from 'src/repository/interface/activity.repository.dto.impl';
 import { ActivityRepositoryService } from 'src/repository/service/activity.repository.service';
 import { ActivityService } from './activity.service';
-import { GetActivityListServiceResponse } from './dto/activity.dto';
+import {
+  CreateActivityRequestService,
+  GetActivityListServiceResponse,
+} from './dto/activity.dto';
 
 describe('ActivityService', () => {
   let activityService: ActivityService;
@@ -105,5 +108,42 @@ describe('ActivityService', () => {
       ),
       total,
     ]);
+  });
+
+  it('should create an activity and return true', async () => {
+    // Arrange
+    const body: CreateActivityRequestService = {
+      categoryId: 1,
+      name: 'Activity 1',
+      place: 'Seoul',
+      placeUrl: 'http://localhost:3000',
+      x: '123.456',
+      y: '123.456',
+      participantsMax: 20,
+      content: ActivitySoccerContent.from({
+        categoryId: 1,
+        type: ActivitySoccerType.FULL,
+        formation: ActivitySoccerFormation.FORMATION_433,
+      }),
+    };
+    const userId = 1;
+    const expectedActivityEntity = plainToClass(ActivityEntity, {
+      ...body,
+      userId,
+    });
+    const expectedResult = true;
+
+    activityRepositoryService.postActivity.resolves(expectedResult);
+
+    // Act
+    const result = await activityService.createActivity(body, userId);
+
+    // Assert
+    expect(result).toBe(expectedResult);
+    expect(
+      activityRepositoryService.postActivity.calledOnceWithExactly(
+        expectedActivityEntity,
+      ),
+    ).toBe(true);
   });
 });

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
+import { ActivityEntity } from 'src/repository/entity/activity.entity';
 import { ActivityRepositoryService } from 'src/repository/service/activity.repository.service';
-import { GetActivityListServiceResponse } from './dto/activity.dto';
+import {
+  CreateActivityRequestService,
+  GetActivityListServiceResponse,
+} from './dto/activity.dto';
 
 @Injectable()
 export class ActivityService {
@@ -33,5 +38,16 @@ export class ActivityService {
           ),
       list[1],
     ];
+  }
+
+  async createActivity(
+    body: CreateActivityRequestService,
+    userId: number,
+  ): Promise<boolean> {
+    const result = await this.activityRepositoryService.postActivity(
+      plainToClass(ActivityEntity, { ...body, userId }),
+    );
+
+    return result;
   }
 }

@@ -35,4 +35,10 @@ export class ActivityRepositoryService {
 
     return findAndCount;
   }
+
+  async postActivity(entity: ActivityEntity): Promise<boolean> {
+    const result = await this.activityRepository.save(entity);
+
+    return !!result;
+  }
 }
