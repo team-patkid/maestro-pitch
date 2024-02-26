@@ -1,20 +1,20 @@
+import { createMock } from '@golevelup/ts-jest';
 import { ExecutionContext } from '@nestjs/common';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { v4 as uuidV4 } from 'uuid';
 import sinon, { SinonStubbedInstance } from 'sinon';
+import { ConfigService } from 'src/config/config.service';
 import { HttpError } from 'src/exception/service.error';
 import { AuthService } from 'src/module/auth/auth.service';
-import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
-import { AuthGuard } from './auth.guard';
-import { createMock } from '@golevelup/ts-jest';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ConfigService } from 'src/config/config.service';
+import { UsersEntity } from 'src/repository/entity/users.entity';
 import {
   TypeUsersGender,
   TypeUsersSns,
   TypeUsersStatus,
 } from 'src/repository/enum/users.repository.enum';
-import { UsersEntity } from 'src/repository/entity/users.entity';
+import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
+import { v4 as uuidV4 } from 'uuid';
+import { AuthGuard } from './auth.guard';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -101,7 +101,7 @@ describe('AuthGuard', () => {
       await expect(guard.canActivate(context)).rejects.toThrow(HttpError);
     });
 
-    it.skip('should set userEntity and token in request', async () => {
+    it('should set userEntity and token in request', async () => {
       const context = createMock<ExecutionContext>();
       const userEntity = createUsersEntity({
         status: TypeUsersStatus.NORMAL,
@@ -129,7 +129,7 @@ describe('AuthGuard', () => {
       expect(context.switchToHttp().getRequest()['token']).toBe(jwt);
     });
 
-    it.skip('should return true if all conditions are met', async () => {
+    it('should return true if all conditions are met', async () => {
       const context = createMock<ExecutionContext>();
       const userEntity = createUsersEntity({
         status: TypeUsersStatus.NORMAL,

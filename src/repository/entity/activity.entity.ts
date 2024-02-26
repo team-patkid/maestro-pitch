@@ -5,11 +5,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TypeActivityStatus } from '../enum/activity.repository.enum';
-import { IActivityContent } from '../interface/activity.repository.impl';
+import { IActivityContent } from '../interface/activity.repository.dto.impl';
+import { ActivityMemberEntity } from './activity.member.entity';
 import { CategoryEntity } from './category.entity';
 import { UsersEntity } from './users.entity';
 
@@ -54,13 +56,13 @@ export class ActivityEntity extends BaseEntity {
   y: string;
 
   @Column('int4', { nullable: false })
-  participants: number;
+  participantsMax: number;
 
   @Column('jsonb', {
     nullable: false,
     comment: `
       각 활동에 필요한 정보 (축구, 야구, 탁구 등) 
-      exemple:
+      example:
         축구: {
             categoryId: 1
             type: full, half, foot, education
@@ -74,17 +76,23 @@ export class ActivityEntity extends BaseEntity {
     enum: TypeActivityStatus,
     default: TypeActivityStatus.NORMAL,
   })
-  statuts: TypeActivityStatus;
+  status: TypeActivityStatus;
 
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  imputDate: Date;
+  inputDate: Date;
 
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
   updateDate: Date;
+
+  @OneToMany(
+    () => ActivityMemberEntity,
+    (activityMember) => activityMember.activity,
+  )
+  activityMember?: ActivityMemberEntity[];
 }

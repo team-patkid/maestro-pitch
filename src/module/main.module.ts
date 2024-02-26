@@ -5,6 +5,7 @@ import { AppController } from 'src/app.controller';
 import { ServiceExceptionFilter } from 'src/filter/service.exception.filter';
 import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
+import { ActivityModule } from './activity/activity.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { ClientModule } from './client/client.module';
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
     ClientModule,
     UsersModule,
     CategoryModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [

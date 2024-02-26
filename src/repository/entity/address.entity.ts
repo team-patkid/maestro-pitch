@@ -43,7 +43,7 @@ export class AddressEntity extends BaseEntity {
   @ManyToOne(() => UsersEntity, (user) => user.address, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-    createForeignKeyConstraints: process.env.NODE_ENV === 'test',
+    createForeignKeyConstraints: process.env.NODE_ENV !== 'test',
   })
   @JoinColumn({ name: 'user_id' })
   user: UsersEntity;

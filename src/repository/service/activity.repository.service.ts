@@ -11,12 +11,28 @@ export class ActivityRepositoryService {
     private readonly activityRepository: Repository<ActivityEntity>,
   ) {}
 
-  async findAll(): Promise<ActivityEntity[]> {
-    return this.activityRepository.find({
+  async findAndCountAll(): Promise<[ActivityEntity[], number]> {
+    const findAndCount = this.activityRepository.findAndCount({
       where: {
-        statuts: In([TypeActivityStatus.NORMAL, TypeActivityStatus.DONE]),
+        status: In([TypeActivityStatus.NORMAL, TypeActivityStatus.DONE]),
       },
-      relations: ['user', 'category'],
+      relations: ['activityMember'],
     });
+
+    return findAndCount;
+  }
+
+  async findAndCountAllByCategoryId(
+    categoryId: number,
+  ): Promise<[ActivityEntity[], number]> {
+    const findAndCount = this.activityRepository.findAndCount({
+      where: {
+        status: In([TypeActivityStatus.NORMAL, TypeActivityStatus.DONE]),
+        categoryId,
+      },
+      relations: ['activityMember'],
+    });
+
+    return findAndCount;
   }
 }
