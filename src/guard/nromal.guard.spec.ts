@@ -14,10 +14,10 @@ import {
 } from 'src/repository/enum/users.repository.enum';
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { v4 as uuidV4 } from 'uuid';
-import { AuthGuard } from './auth.guard';
+import { NormalGuard } from './normal.guard';
 
-describe('AuthGuard', () => {
-  let guard: AuthGuard;
+describe('NormalGuard', () => {
+  let guard: NormalGuard;
   let authService: AuthService;
   let usersRepositoryService: SinonStubbedInstance<UsersRepositoryService>;
 
@@ -32,7 +32,7 @@ describe('AuthGuard', () => {
 
     authService = new AuthService(module.get<JwtService>(JwtService));
     usersRepositoryService = sinon.createStubInstance(UsersRepositoryService);
-    guard = new AuthGuard(authService, usersRepositoryService);
+    guard = new NormalGuard(authService, usersRepositoryService);
   });
 
   const createUsersEntity = (ctx: {

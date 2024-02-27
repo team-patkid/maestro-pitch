@@ -1,10 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { plainToClass, plainToInstance } from 'class-transformer';
-import { IsArray, IsDefined, IsEmail, IsEnum, IsString } from 'class-validator';
+import { Type, plainToClass, plainToInstance } from 'class-transformer';
+import {
+  IsArray,
+  IsDefined,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { UsersEntity } from 'src/repository/entity/users.entity';
 import {
   TypeUsersGender,
   TypeUsersSns,
+  TypeUsersStatus,
 } from 'src/repository/enum/users.repository.enum';
 
 export class UsersLoginResult {
@@ -93,7 +101,7 @@ export class PatchNormalUserRequest {
   address: Array<string>;
 }
 
-export class NormalUserDto {
+export class UserAdditionalInfoDto {
   email: string;
   name: string;
   contact: string;
@@ -104,7 +112,54 @@ export class NormalUserDto {
     name: string;
     contact: string;
     gender: TypeUsersGender;
-  }): NormalUserDto {
-    return plainToClass(NormalUserDto, ctx);
+  }): UserAdditionalInfoDto {
+    return plainToClass(UserAdditionalInfoDto, ctx);
+  }
+}
+
+export class GetUserInfoRequesst {
+  @ApiProperty({
+    description: '유저 id',
+    example: 1,
+  })
+  @IsNumber()
+  @IsDefined()
+  @Type(() => Number)
+  userId: number;
+}
+
+export class GetUserInfoResponse {
+  id: number;
+  email?: string;
+  name?: string;
+  contact?: string;
+  experience: number;
+  gender: TypeUsersGender;
+  sns: TypeUsersSns;
+  status: TypeUsersStatus;
+  inputDate: Date;
+  address: Array<string>;
+
+  static from(data: Partial<GetUserInfoResponse>): GetUserInfoResponse {
+    return plainToClass(GetUserInfoResponse, data);
+  }
+}
+
+export class GetUserInfoServiceResponse {
+  id: number;
+  email?: string;
+  name?: string;
+  contact?: string;
+  experience: number;
+  gender: TypeUsersGender;
+  sns: TypeUsersSns;
+  status: TypeUsersStatus;
+  inputDate: Date;
+  address: Array<string>;
+
+  static from(
+    data: Partial<GetUserInfoServiceResponse>,
+  ): GetUserInfoServiceResponse {
+    return plainToClass(GetUserInfoServiceResponse, data);
   }
 }

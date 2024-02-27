@@ -13,7 +13,11 @@ import { LogExperienceRepositoryService } from 'src/repository/service/log-exper
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { AuthService } from '../auth/auth.service';
 import { KakaoClientService } from '../client/kakao.client.service';
-import { NormalUserDto, UsersLoginResult } from './dto/users.dto';
+import {
+  GetUserInfoServiceResponse,
+  UserAdditionalInfoDto,
+  UsersLoginResult,
+} from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -87,7 +91,7 @@ export class UsersService {
   @TransactionalExceptTest()
   async patchNormalUserAndGetNormalJwt(
     id: number,
-    dto: NormalUserDto,
+    dto: UserAdditionalInfoDto,
     address: Array<string>,
   ): Promise<string> {
     await this.addressRepositoryService.bulkInsertAddressInfo(
@@ -110,5 +114,24 @@ export class UsersService {
     );
 
     return jwt;
+  }
+
+  async getUserInfo(userId: number): Promise<GetUserInfoServiceResponse> {
+    const entity = await this.usersRepositoryService.getUsersInfoById(userId);
+
+    const info = GetUserInfoServiceResponse.from({
+      id: entity.id,
+      email: entity.email,
+      name: entity.name,
+      contact: entity.contact,
+      experience: entity.experience,
+      gender: entity.gender,
+      sns: entity.sns,
+      status: entity.status,
+      inputDate: entity.inputDate,
+      address: entity.address.map((address) => address.address),
+    });
+
+    return info;
   }
 }

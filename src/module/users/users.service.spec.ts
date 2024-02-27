@@ -9,6 +9,7 @@ import {
   TypeUsersSns,
   TypeUsersStatus,
 } from 'src/repository/enum/users.repository.enum';
+import { AddressRepositoryService } from 'src/repository/service/address.repository.service';
 import { LogExperienceRepositoryService } from 'src/repository/service/log-experience.repository.service';
 import { UsersRepositoryService } from 'src/repository/service/users.repository.service';
 import { v4 as uuidV4 } from 'uuid';
@@ -16,9 +17,8 @@ import { AuthService } from '../auth/auth.service';
 import { CoreClientService } from '../client/core.client.service';
 import { KakaoUserInfo } from '../client/dto/kakao.client.dto';
 import { KakaoClientService } from '../client/kakao.client.service';
-import { NormalUserDto, UsersLoginResult } from './dto/users.dto';
+import { UserAdditionalInfoDto, UsersLoginResult } from './dto/users.dto';
 import { UsersService } from './users.service';
-import { AddressRepositoryService } from 'src/repository/service/address.repository.service';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -113,8 +113,8 @@ describe('UsersService', () => {
     name?: string;
     contact?: string;
     gender?: TypeUsersGender;
-  }): NormalUserDto => {
-    const dto = new NormalUserDto();
+  }): UserAdditionalInfoDto => {
+    const dto = new UserAdditionalInfoDto();
 
     dto.email = ctx.email ?? 'foo@bar.com';
     dto.name = ctx.name ?? uuidV4();

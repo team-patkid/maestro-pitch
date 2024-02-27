@@ -16,7 +16,7 @@ import { ResponseDataDto } from 'src/decorator/dto/response-data.dto';
 import { ResponseListDto } from 'src/decorator/dto/response.list.dto';
 import { ResponseData } from 'src/decorator/response-data.decorator';
 import { ResponseList } from 'src/decorator/response-list.decorator';
-import { AuthGuard } from 'src/guard/auth.guard';
+import { NormalGuard } from 'src/guard/normal.guard';
 import { ActivityMemberSoccerContent } from 'src/repository/dto/activity.member.repository.dto';
 import { IActivityContent } from 'src/repository/interface/activity.repository.dto.impl';
 import { AuthHeader } from '../auth/enum/auth.enum';
@@ -77,7 +77,7 @@ export class ActivityController {
     summary: '모임 글 쓰기',
     description: '축구 야구 등 스포츠 모임 글 쓰기',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(NormalGuard)
   @ApiBearerAuth(AuthHeader.BEARER)
   @HttpCode(HttpStatus.OK)
   @ResponseData(Boolean)
@@ -111,7 +111,7 @@ export class ActivityController {
     summary: '모임 참가 신청',
     description: '모임 참가 신청',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(NormalGuard)
   @ApiBearerAuth(AuthHeader.BEARER)
   @HttpCode(HttpStatus.OK)
   @ResponseData(Boolean)

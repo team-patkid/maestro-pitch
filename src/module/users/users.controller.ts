@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
@@ -16,13 +17,15 @@ import { ResponseData } from 'src/decorator/response-data.decorator';
 import { ResponseError } from 'src/decorator/response-error.decorator';
 import { ErrorCode } from 'src/exception/enum/error.enum';
 import { AssociateGuard } from 'src/guard/associate.guard';
+import { AuthGuard } from 'src/guard/auth.guard';
 import { AuthHeader } from '../auth/enum/auth.enum';
 import {
-  NormalUserDto,
+  GetUserInfoResponse,
   PatchNormalUserRequest,
   PatchNormalUserResponse,
   PostUsersSnsLoginRequest,
   PostUsersSnsLoginResponse,
+  UserAdditionalInfoDto,
 } from './dto/users.dto';
 import { UsersService } from './users.service';
 
@@ -74,7 +77,7 @@ export class UsersController {
   ): Promise<ResponseDataDto<PatchNormalUserResponse>> {
     const result = await this.usersService.patchNormalUserAndGetNormalJwt(
       this.req.userEntity.id,
-      NormalUserDto.from({
+      UserAdditionalInfoDto.from({
         email: body.email,
         name: body.name,
         contact: body.contact,
@@ -84,5 +87,26 @@ export class UsersController {
     );
 
     return new ResponseDataDto({ jwt: result });
+  }
+
+  @ApiOperation({
+    summary: '유저 정보 조회',
+    description: '유저 정보를 조회한다',
+  })
+  @Get('info/:userId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth(AuthHeader.BEARER)
+  @ResponseData(GetUserInfoResponse)
+  @ResponseError([
+    ErrorCode.NOT_ASSOCIATE_USER,
+    ErrorCode.UNAUTHORIZED,
+    ErrorCode.JWT_UNABLE_VERIFY,
+    ErrorCode.NOT_FOUND_CONTENT,
+    ErrorCode.INTERNAL_SERVER_ERROR,
+  ])
+  async getUserInfo(): Promise<ResponseDataDto<GetUserInfoResponse>> {
+    const result = await this.usersService.getUserInfo(this.req.userEntity.id);
+    return new ResponseDataDto(GetUserInfoResponse.from(result));
   }
 }
