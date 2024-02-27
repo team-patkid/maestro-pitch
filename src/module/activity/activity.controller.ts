@@ -17,10 +17,13 @@ import { ResponseListDto } from 'src/decorator/dto/response.list.dto';
 import { ResponseData } from 'src/decorator/response-data.decorator';
 import { ResponseList } from 'src/decorator/response-list.decorator';
 import { AuthGuard } from 'src/guard/auth.guard';
+import { ActivityMemberSoccerContent } from 'src/repository/dto/activity.member.repository.dto';
 import { IActivityContent } from 'src/repository/interface/activity.repository.dto.impl';
 import { AuthHeader } from '../auth/enum/auth.enum';
 import { ActivityService } from './activity.service';
 import {
+  CreateActivityMemberRequest,
+  CreateActivityMemberRequestService,
   CreateActivityRequest,
   CreateActivityRequestService,
   GetActivityListRequest,
@@ -36,10 +39,10 @@ export class ActivityController {
     private readonly activityService: ActivityService,
   ) {}
 
-  @ApiTags('게시글')
+  @ApiTags('모임')
   @ApiOperation({
-    summary: 'Get activity list',
-    description: 'Get activity list',
+    summary: '모임 리스트 조회',
+    description: '모임 리스트 조회',
   })
   @HttpCode(HttpStatus.OK)
   @Get('list/:categoryId')
@@ -69,7 +72,7 @@ export class ActivityController {
     return new ResponseListDto(responseList, total);
   }
 
-  @ApiTags('게시글')
+  @ApiTags('모임')
   @ApiOperation({
     summary: '모임 글 쓰기',
     description: '축구 야구 등 스포츠 모임 글 쓰기',
@@ -96,6 +99,37 @@ export class ActivityController {
           type: body.type,
           formation: body.formation,
         } as IActivityContent,
+      }),
+      this.req.userEntity.id,
+    );
+
+    return new ResponseDataDto(result);
+  }
+
+  @ApiTags('모임')
+  @ApiOperation({
+    summary: '모임 참가 신청',
+    description: '모임 참가 신청',
+  })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth(AuthHeader.BEARER)
+  @HttpCode(HttpStatus.OK)
+  @ResponseData(Boolean)
+  @Post('member')
+  async createActivityMember(
+    @Body() body: CreateActivityMemberRequest,
+  ): Promise<ResponseDataDto<boolean>> {
+    const result = await this.activityService.createActivityMember(
+      CreateActivityMemberRequestService.from({
+        activityId: body.activityId,
+        content: ActivityMemberSoccerContent.from({
+          position: body.position,
+          backNumber: body.backNumber,
+          how: body.how,
+          style: body.style,
+        }),
+        type: body.type,
+        status: body.status,
       }),
       this.req.userEntity.id,
     );

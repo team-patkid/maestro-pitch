@@ -1,17 +1,25 @@
 import { plainToClass } from 'class-transformer';
 import sinon, { SinonStubbedInstance } from 'sinon';
+import { ActivityMemberSoccerContent } from 'src/repository/dto/activity.member.repository.dto';
 import { ActivitySoccerContent } from 'src/repository/dto/activity.repository.dto';
 import { ActivityEntity } from 'src/repository/entity/activity.entity';
 import { ActivityMemberEntity } from 'src/repository/entity/activity.member.entity';
+import {
+  ActivityMemberSoccerHow,
+  ActivityMemberSoccerPosition,
+  ActivityMemberSoccerStyle,
+} from 'src/repository/enum/activity.member.enum';
 import {
   ActivitySoccerFormation,
   ActivitySoccerType,
   TypeActivityStatus,
 } from 'src/repository/enum/activity.repository.enum';
 import { IActivityContent } from 'src/repository/interface/activity.repository.dto.impl';
+import { ActivityMemberRepositoryService } from 'src/repository/service/activity.member.activity.service';
 import { ActivityRepositoryService } from 'src/repository/service/activity.repository.service';
 import { ActivityService } from './activity.service';
 import {
+  CreateActivityMemberRequestService,
   CreateActivityRequestService,
   GetActivityListServiceResponse,
 } from './dto/activity.dto';
@@ -19,12 +27,20 @@ import {
 describe('ActivityService', () => {
   let activityService: ActivityService;
   let activityRepositoryService: SinonStubbedInstance<ActivityRepositoryService>;
+  let activityMemberRepositoryService: SinonStubbedInstance<ActivityMemberRepositoryService>;
 
   beforeEach(async () => {
     activityRepositoryService = sinon.createStubInstance(
       ActivityRepositoryService,
     );
-    activityService = new ActivityService(activityRepositoryService);
+    activityMemberRepositoryService = sinon.createStubInstance(
+      ActivityMemberRepositoryService,
+    );
+
+    activityService = new ActivityService(
+      activityRepositoryService,
+      activityMemberRepositoryService,
+    );
   });
 
   it('should be defined', () => {
@@ -143,6 +159,38 @@ describe('ActivityService', () => {
     expect(
       activityRepositoryService.postActivity.calledOnceWithExactly(
         expectedActivityEntity,
+      ),
+    ).toBe(true);
+  });
+
+  it('should create an activity member and return true', async () => {
+    // Arrange
+    const body: CreateActivityMemberRequestService = {
+      activityId: 1,
+      content: ActivityMemberSoccerContent.from({
+        position: ActivityMemberSoccerPosition.GK,
+        backNumber: 1,
+        how: ActivityMemberSoccerHow.BOTH,
+        style: ActivityMemberSoccerStyle.ST,
+      }),
+    };
+    const userId = 1;
+    const expectedActivityMemberEntity = plainToClass(ActivityMemberEntity, {
+      ...body,
+      userId,
+    });
+    const expectedResult = true;
+
+    activityMemberRepositoryService.postActivityMember.resolves(expectedResult);
+
+    // Act
+    const result = await activityService.createActivityMember(body, userId);
+
+    // Assert
+    expect(result).toBe(expectedResult);
+    expect(
+      activityMemberRepositoryService.postActivityMember.calledOnceWithExactly(
+        expectedActivityMemberEntity,
       ),
     ).toBe(true);
   });

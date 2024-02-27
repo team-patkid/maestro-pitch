@@ -13,4 +13,10 @@ export class ActivityMemberRepositoryService {
   async bulkInsert(activityMember: ActivityMemberEntity[]) {
     await this.activityMemberRepository.insert(activityMember);
   }
+
+  async postActivityMember(entity: ActivityMemberEntity): Promise<boolean> {
+    const result = await this.activityMemberRepository.save(entity);
+
+    return !!result;
+  }
 }

@@ -36,10 +36,18 @@ export class ActivityMemberEntity extends BaseEntity {
   })
   content: IActivityMemberContent;
 
-  @Column('enum', { enum: TypeActivityMemberType, nullable: false })
+  @Column('enum', {
+    enum: TypeActivityMemberType,
+    default: TypeActivityMemberType.NORMAL,
+    nullable: false,
+  })
   type: TypeActivityMemberType;
 
-  @Column('enum', { enum: TypeActivityMemberStatus, nullable: false })
+  @Column('enum', {
+    enum: TypeActivityMemberStatus,
+    default: TypeActivityMemberStatus.WAIT,
+    nullable: false,
+  })
   status: TypeActivityMemberStatus;
 
   @CreateDateColumn({

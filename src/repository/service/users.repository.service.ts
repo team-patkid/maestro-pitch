@@ -42,6 +42,7 @@ export class UsersRepositoryService {
   }
 
   async insertUserInfo(dto: UsersEntity): Promise<UsersEntity> {
+    console.log('DTO ::: ', dto);
     const insertResult = await this.userRepository.insert(dto);
 
     const result = await this.userRepository.findOne({
