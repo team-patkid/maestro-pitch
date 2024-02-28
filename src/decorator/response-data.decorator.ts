@@ -15,10 +15,16 @@ export const ResponseData = <TModel extends Type<unknown>>(model: TModel) =>
                 type: 'boolean',
                 example: true,
               },
-              data: {
-                type: 'object',
-                $ref: getSchemaPath(model),
-              },
+              data:
+                model === Boolean.prototype.constructor
+                  ? {
+                      type: 'boolean',
+                      example: true,
+                    }
+                  : {
+                      type: 'object',
+                      $ref: getSchemaPath(model),
+                    },
             },
           },
         ],
