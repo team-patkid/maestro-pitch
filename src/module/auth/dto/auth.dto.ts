@@ -16,7 +16,7 @@ export class GetKakaoAUthInfoRequest {
     example: 'https://maestro-api.patkid.kr/health',
     description: 'kakao 로그인 후 callback 데이터를 보낸 주소',
   })
-  @IsUrl()
+  @IsString()
   @IsDefined()
   redirect: string;
 }
