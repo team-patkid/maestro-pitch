@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
 import { ConfigService } from 'src/config/config.service';
 import { AuthHeader } from 'src/module/auth/enum/auth.enum';
 
@@ -23,5 +24,14 @@ export function setupSwagger(app: INestApplication) {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('/api', app, document);
+  app.use(
+    '/reference',
+    apiReference({
+      spec: {
+        content: document,
+      },
+    }),
+  );
+
+  // SwaggerModule.setup('/api', app, document);
 }
