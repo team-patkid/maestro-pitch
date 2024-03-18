@@ -33,7 +33,7 @@ export class ActivityService {
               id: activity.id,
               makerId: activity.userId,
               categoryId: activity.categoryId,
-              name: activity.name,
+              title: activity.title,
               participants: activity.activityMember.length,
               participantsMax: activity.participantsMax,
               content: activity.content,

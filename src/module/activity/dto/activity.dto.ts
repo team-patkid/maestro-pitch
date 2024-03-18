@@ -26,7 +26,7 @@ export class GetActivityListServiceResponse {
   id: number;
   makerId: number;
   categoryId: number;
-  name: string;
+  title: string;
   participants: number;
   participantsMax: number;
   content: IActivityContent;
@@ -40,13 +40,28 @@ export class GetActivityListServiceResponse {
 }
 
 export class GetActivityListResponse {
+  @ApiProperty({ description: '모임 아이디', example: 1 })
   id: number;
+  @ApiProperty({ description: '모임 만든 사람 아이디', example: 1 })
   makerId: number;
+  @ApiProperty({ description: '카테고리 아이디', example: 1 })
   categoryId: number;
-  name: string;
+  @ApiProperty({ description: '모임 이름', example: '축구모임' })
+  title: string;
+  @ApiProperty({ description: '참가자 수', example: 10 })
   participants: number;
+  @ApiProperty({ description: '최대 참가자 수', example: 10 })
   participantsMax: number;
+  @ApiProperty({
+    description: '모임 내용',
+    example: {
+      categoryId: 1,
+      type: ActivitySoccerType,
+      formation: ActivitySoccerFormation,
+    },
+  })
   content: ActivitySoccerContent;
+  @ApiProperty({ description: '모임 생성 날짜', example: new Date() })
   inputData: Date;
 
   static from(data: Partial<GetActivityListResponse>): GetActivityListResponse {

@@ -12,7 +12,7 @@ export class CategoryController {
 
   @ApiOperation({
     summary: '카테고리 리스트',
-    description: '카테고리 리스트를 조회한다',
+    description: '모임에 사용되는 카테고리 리스트를 가져온다.',
   })
   @Get('list')
   @ResponseList(CategoryListServiceResponse)

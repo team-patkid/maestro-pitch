@@ -25,7 +25,7 @@ export function setupSwagger(app: INestApplication) {
   const document = SwaggerModule.createDocument(app, config);
 
   app.use(
-    '/reference',
+    '/api',
     apiReference({
       spec: {
         content: document,

@@ -91,9 +91,9 @@ export class UsersController {
 
   @ApiOperation({
     summary: '유저 정보 조회',
-    description: '유저 정보를 조회한다',
+    description: '유저 정보를 조회하여 필요한 UI에 맞게 데이터를 제공한다.',
   })
-  @Get('info/:userId')
+  @Get('info')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @ApiBearerAuth(AuthHeader.BEARER)

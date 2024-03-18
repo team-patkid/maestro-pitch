@@ -66,7 +66,7 @@ describe('ActivityService', () => {
     activity.id = ctx.id || 1;
     activity.userId = ctx.userId || 1;
     activity.categoryId = ctx.categoryId || 1;
-    activity.name = ctx.name || 'Activity 1';
+    activity.title = ctx.name || 'Activity 1';
     activity.place = ctx.place || 'Seoul';
     activity.placeUrl = ctx.placeUrl || 'http://localhost:3000';
     activity.x = ctx.x || '123.456';
@@ -115,7 +115,7 @@ describe('ActivityService', () => {
           id: activity.id,
           makerId: activity.userId,
           categoryId: activity.categoryId,
-          name: activity.name,
+          title: activity.title,
           participants: activity.activityMember.length,
           participantsMax: activity.participantsMax,
           content: activity.content,

@@ -26,7 +26,9 @@ export class UsersLoginResult {
 
 export class PostUsersSnsLoginRequest {
   @ApiProperty({
-    description: 'kakao auth info에서 나온 access_token',
+    description: '/v1/auth/kakao response 값 access_token',
+    example:
+      'N6kmZd-APXjHUmxKnN4ljrMaTEdARaBq5U9anMUcrNfgwLx_aLfukvJBju4KKiVRAAABjRV-SVsh5oEAb4_jFQ',
   })
   @IsString()
   @IsDefined()
@@ -44,6 +46,7 @@ export class PostUsersSnsLoginRequest {
 export class PatchNormalUserResponse {
   @ApiProperty({
     description: '정회원 인증 후 나온 jwt token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
   })
   @IsString()
   @IsDefined()
@@ -129,15 +132,58 @@ export class GetUserInfoRequesst {
 }
 
 export class GetUserInfoResponse {
+  @ApiProperty({
+    description: '유저 id',
+    example: 1,
+  })
   id: number;
+  @ApiProperty({
+    description: '유저 email',
+    example: 'foo@bar.com',
+    required: false,
+  })
   email?: string;
+  @ApiProperty({
+    description: '유저 이름',
+    example: '홍길동',
+    required: false,
+  })
   name?: string;
+  @ApiProperty({
+    description: '유저 전화번호',
+    example: '010-1234-5678',
+    required: false,
+  })
   contact?: string;
+  @ApiProperty({
+    description: '유저 경험치',
+    example: 1,
+  })
   experience: number;
+  @ApiProperty({
+    description: '유저 성별',
+    example: TypeUsersGender,
+  })
   gender: TypeUsersGender;
+  @ApiProperty({
+    description: '유저 sns',
+    example: TypeUsersSns,
+  })
   sns: TypeUsersSns;
+  @ApiProperty({
+    description: '유저 상태',
+    example: TypeUsersStatus,
+  })
   status: TypeUsersStatus;
+  @ApiProperty({
+    description: '유저 가입일',
+    example: new Date(),
+  })
   inputDate: Date;
+  @ApiProperty({
+    description: '유저 거주지 주소',
+    example: ['서울특별시 강남구 역삼동 123-456'],
+  })
   address: Array<string>;
 
   static from(data: Partial<GetUserInfoResponse>): GetUserInfoResponse {

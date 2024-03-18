@@ -41,7 +41,7 @@ export class ActivityEntity extends BaseEntity {
   category: CategoryEntity;
 
   @Column('varchar', { length: 100, nullable: false })
-  name: string;
+  title: string;
 
   @Column('varchar', { length: 255, nullable: false })
   place: string;

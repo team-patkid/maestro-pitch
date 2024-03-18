@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
-import { IsDefined, IsString, IsUrl } from 'class-validator';
+import { IsDefined, IsString } from 'class-validator';
 
 export class GetKakaoAUthInfoRequest {
   @ApiProperty({

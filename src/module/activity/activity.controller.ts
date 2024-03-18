@@ -42,7 +42,7 @@ export class ActivityController {
   @ApiTags('모임')
   @ApiOperation({
     summary: '모임 리스트 조회',
-    description: '모임 리스트 조회',
+    description: '유저들이 생성한 모임 리스트 조회',
   })
   @HttpCode(HttpStatus.OK)
   @Get('list/:categoryId')
@@ -59,7 +59,7 @@ export class ActivityController {
         id: activity.id,
         makerId: activity.makerId,
         categoryId: activity.categoryId,
-        name: activity.name,
+        title: activity.title,
         participants: activity.participants,
         participantsMax: activity.participantsMax,
         content: activity.content,
