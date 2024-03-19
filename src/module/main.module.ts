@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  activityMemberResource,
+  activityResource,
+  addressResource,
+  categoryResource,
+  logExperienceResource,
+  usersResource,
+} from 'src/adminjs/resource';
 import { AppController } from 'src/app.controller';
 import { ConfigService } from 'src/config/config.service';
 import { ServiceExceptionFilter } from 'src/filter/service.exception.filter';
-import { ActivityEntity } from 'src/repository/entity/activity.entity';
-import { ActivityMemberEntity } from 'src/repository/entity/activity.member.entity';
-import { AddressEntity } from 'src/repository/entity/address.entity';
-import { CategoryEntity } from 'src/repository/entity/category.entity';
-import { LogExperienceEntity } from 'src/repository/entity/log-experience.entity';
-import { UsersEntity } from 'src/repository/entity/users.entity';
 import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { ActivityModule } from './activity/activity.module';
@@ -67,21 +69,12 @@ AdminJSModule.then(async (v) =>
           adminJsOptions: {
             rootPath: '/admin',
             resources: [
-              {
-                resource: UsersEntity,
-                options: {
-                  properties: {
-                    password: {
-                      isVisible: false,
-                    },
-                  },
-                },
-              },
-              ActivityEntity,
-              ActivityMemberEntity,
-              AddressEntity,
-              CategoryEntity,
-              LogExperienceEntity,
+              usersResource,
+              activityResource,
+              activityMemberResource,
+              addressResource,
+              categoryResource,
+              logExperienceResource,
             ],
           },
           auth: {
@@ -93,6 +86,16 @@ AdminJSModule.then(async (v) =>
             resave: true,
             saveUninitialized: true,
             secret: 'secret',
+          },
+          branding: {
+            companyName: 'Maestro Pitch Admin',
+          },
+          locale: {
+            translations: {
+              labels: {
+                UsersEntity: '유저',
+              },
+            },
           },
         }),
       }),
