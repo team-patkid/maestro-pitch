@@ -6,7 +6,7 @@ import {
 export interface IActivityContent {
   categoryId: number;
   type: string | ActivitySoccerType;
-  formation: string;
+  formation: string | ActivitySoccerFormation;
 
   setType(value: string): void;
   setType(value: ActivitySoccerType): void;

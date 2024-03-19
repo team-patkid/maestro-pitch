@@ -29,4 +29,10 @@ export interface Configuration {
     SECRET: string;
     LOGIN_EXPIRE_IN: string;
   };
+
+  // Admin
+  readonly ADMIN: {
+    ID: string;
+    PASSWORD: string;
+  };
 }

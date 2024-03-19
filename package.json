@@ -21,6 +21,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@adminjs/express": "^6.1.0",
+    "@adminjs/nestjs": "^6.1.0",
+    "@adminjs/typeorm": "^5.0.1",
     "@golevelup/ts-jest": "^0.4.0",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
@@ -32,10 +35,13 @@
     "@scalar/nestjs-api-reference": "^0.2.6",
     "@sentry/node": "^7.93.0",
     "@types/sinon": "^17.0.3",
+    "adminjs": "^7.7.3",
     "axios": "^1.6.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cls-rtracer": "^2.6.3",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.18.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
