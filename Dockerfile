@@ -2,13 +2,14 @@
 FROM node:18-alpine AS build
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN npm install --only=production
 COPY . .
 RUN npm run build
 
 # dev stage
 FROM node:18-alpine
 WORKDIR /usr/src/app
+RUN rm -rf ./dist ./node_modules
 COPY --from=build /usr/src/app/dist/src ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY package*.json ./
