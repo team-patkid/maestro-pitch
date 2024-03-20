@@ -49,6 +49,16 @@ node {
           """
         }
       }
+      stage('delete cache') {
+        sshagent (credentials: ['79ac0389-d078-4099-81e5-96bff12a2672']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no ${env.TARGET_HOST} '
+            cd projectP/maestro-pitch
+            sudo docker system prune -a -f
+          '
+          """
+        }
+      }
     } catch (env) {
         echo 'error = ' + env
         throw env
