@@ -87,7 +87,7 @@ export class CreateActivityRequest {
   @ApiProperty({ description: '모임 이름', example: '축구모임' })
   @IsString()
   @IsDefined()
-  name: string;
+  title: string;
 
   @ApiProperty({ description: '모임 장소', example: '서울시 강남구' })
   @IsString()
@@ -137,7 +137,7 @@ export class CreateActivityRequest {
 
 export class CreateActivityRequestService {
   categoryId: number;
-  name: string;
+  title: string;
   place: string;
   placeUrl: string;
   x: string;
