@@ -88,7 +88,7 @@ export class ActivityController {
     const result = await this.activityService.createActivity(
       CreateActivityRequestService.from({
         categoryId: body.categoryId,
-        name: body.name,
+        title: body.title,
         place: body.place,
         placeUrl: body.placeUrl,
         x: body.x,
