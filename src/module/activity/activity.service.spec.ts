@@ -130,7 +130,7 @@ describe('ActivityService', () => {
     // Arrange
     const body: CreateActivityRequestService = {
       categoryId: 1,
-      name: 'Activity 1',
+      title: 'Activity 1',
       place: 'Seoul',
       placeUrl: 'http://localhost:3000',
       x: '123.456',
